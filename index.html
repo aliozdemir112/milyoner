@@ -117,6 +117,27 @@
   .pulse { animation: pulse 1.5s infinite; }
   .ust-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
   .hidden { display: none; }
+  .oyun-layout { display: flex; gap: 16px; width: 100%; max-width: 960px; align-items: flex-start; }
+  .sol-panel {
+    width: 180px; flex-shrink: 0;
+    background: rgba(255,255,255,0.03); border: 1px solid #1a2a4a;
+    border-radius: 16px; padding: 14px;
+  }
+  .sol-panel-baslik { font-size: 10px; color: #666; letter-spacing: 2px; text-align: center; margin-bottom: 8px; }
+  .oyuncu-kart { border-radius: 10px; padding: 10px; text-align: center; border: 1px solid #2a3a5a; margin-bottom: 8px; }
+  .oyuncu-kart-isim { font-size: 14px; font-weight: bold; margin-bottom: 2px; }
+  .oyuncu-kart-rol { font-size: 10px; letter-spacing: 1px; color: #888; }
+  .odul-listesi { margin-top: 8px; }
+  .odul-satir { font-size: 10px; text-align: right; padding: 3px 6px; border-radius: 4px; color: #444; margin-bottom: 2px; }
+  .odul-satir-aktif { background: rgba(200,160,32,0.3); color: #f0c040 !important; font-weight: bold; }
+  .odul-satir-guvenli { color: #2a8a2a !important; }
+  .odul-satir-gecti { color: #666 !important; }
+  .sag-icerik { flex: 1; min-width: 0; }
+  @media (max-width: 640px) {
+    .oyun-layout { flex-direction: column; }
+    .sol-panel { width: 100%; }
+    .odul-listesi { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -248,6 +269,11 @@ async function odayaKatil() {
 
 async function oyunuBaslat() {
   await fbUpdate(`odalar/${state.odaId}`, { ekran: "oyun", soruIndex: 0, secilenSik: null, onaylandi: false, sonuc: null });
+}
+
+async function sikSecWrapper(idx, tiklanabilir) {
+  if (!tiklanabilir) return;
+  await sikSec(idx);
 }
 
 async function sikSec(idx) {
@@ -495,7 +521,7 @@ function renderOyunIci() {
         if (i === d.secilenSik || i === d.secilenSik) ekstraCls = " sik-secili";
       }
       const tiklanabilir = rol === "yarismaci" && !d.onaylandi && !gizli;
-      siklarHtml += `<button class="sik${ekstraCls}" onclick="${tiklanabilir ? `sikSec(${i})` : ''}" ${tiklanabilir ? '' : 'disabled'}>
+      siklarHtml += `<button class="sik${ekstraCls}" onclick="sikSecWrapper(${i}, ${tiklanabilir})" style="cursor:${tiklanabilir?'pointer':'default'}">
         <span class="sik-harf">${HARFLER[i]}</span>${s}
       </button>`;
     }
@@ -512,22 +538,49 @@ function renderOyunIci() {
     altButon = `<div class="bilgi-kutu pulse" style="color:#4af0a0">⬆️ Bir şık seç!</div>`;
   }
 
+  // Sol panel - oyuncu kartları ve ödül listesi
+  let solPanel = `
+    <div class="sol-panel">
+      <div class="sol-panel-baslik">OYUNCULAR</div>
+      <div class="oyuncu-kart" style="border-color:#c8a020">
+        <div class="oyuncu-kart-isim" style="color:#f0c040">🎙️ ${d.sunucu?.isim || 'Sunucu'}</div>
+        <div class="oyuncu-kart-rol">SUNUCU</div>
+      </div>
+      <div class="oyuncu-kart" style="border-color:#4af0a0">
+        <div class="oyuncu-kart-isim" style="color:#4af0a0">🎯 ${d.yarismaci?.isim || 'Yarışmacı'}</div>
+        <div class="oyuncu-kart-rol">YARIŞMACI</div>
+      </div>
+      <div class="odul-listesi">
+        <div class="sol-panel-baslik" style="margin-top:8px">ÖDÜLLER</div>
+        ${[...ODULLER].reverse().map((o, ri) => {
+          const i = ODULLER.length - 1 - ri;
+          let cls = "odul-satir";
+          if (i === d.soruIndex) cls += " odul-satir-aktif";
+          else if (GUVENLI.includes(i)) cls += " odul-satir-guvenli";
+          else if (i < d.soruIndex) cls += " odul-satir-gecti";
+          return `<div class="${cls}">${GUVENLI.includes(i)?'🔒 ':''}${o}</div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
   app.innerHTML = `
-    <div>
-      <div class="ust-bar">
-        <div style="font-size:13px;color:#c8a020;letter-spacing:2px">SORU ${d.soruIndex+1}/${SORULAR.length}</div>
-        <div style="font-size:16px;font-weight:bold;color:#f0c040">🏆 ${ODULLER[d.soruIndex]}</div>
-        <div style="font-size:13px;color:#4af0a0">🎯 ${d.yarismaci?.isim || ''}</div>
+    <div class="oyun-layout">
+      ${solPanel}
+      <div class="sag-icerik">
+        <div class="ust-bar">
+          <div style="font-size:13px;color:#c8a020;letter-spacing:2px">SORU ${d.soruIndex+1}/${SORULAR.length}</div>
+          <div style="font-size:16px;font-weight:bold;color:#f0c040">🏆 ${ODULLER[d.soruIndex]}</div>
+        </div>
+        ${jokerlerHtml}
+        ${seyirciHtml}
+        <div class="rol-badge" style="color:${rol==='sunucu'?'#c8a020':'#4af0a0'}">
+          ${rol==='sunucu'?'🎙️ SUNUCU — Joker kullan, cevabı onayla':'🎯 YARIŞMACI — Şık seç!'}
+        </div>
+        <div class="kart"><p class="soru-text">${soru.soru}</p></div>
+        ${siklarHtml}
+        ${altButon}
       </div>
-      ${odulBar}
-      ${jokerlerHtml}
-      ${seyirciHtml}
-      <div class="rol-badge" style="color:${rol==='sunucu'?'#c8a020':'#4af0a0'}">
-        ${rol==='sunucu'?'🎙️ SUNUCU — Joker kullanabilir, cevabı onaylayabilirsin':'🎯 YARIŞMACI — Şık seç!'}
-      </div>
-      <div class="kart"><p class="soru-text">${soru.soru}</p></div>
-      ${siklarHtml}
-      ${altButon}
     </div>
   `;
 }
