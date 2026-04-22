@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kim Milyoner Olmak İster? - Sunucu Modu</title>
+    <title>Kim Milyoner Olmak İster? - Sunucu & Yarışmacı</title>
     <style>
         :root {
             --dark-blue: #020230;
@@ -32,6 +32,7 @@
             grid-template-columns: 3fr 1fr;
             gap: 20px;
             padding: 20px;
+            display: none; /* Giriş yapılana kadar gizli */
         }
 
         .main-area {
@@ -126,12 +127,10 @@
             font-weight: bold;
         }
 
-        .joker.used { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
-
         #overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -139,17 +138,29 @@
             z-index: 100;
         }
 
+        .entry-card {
+            background: var(--blue-gradient);
+            border: var(--border-style);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(58, 58, 154, 0.5);
+        }
+
         .start-btn {
             background: var(--gold);
             border: none;
             padding: 15px 30px;
             margin: 10px;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            border-radius: 10px;
-            width: 250px;
+            border-radius: 50px;
+            width: 280px;
+            transition: transform 0.2s;
         }
+
+        .start-btn:hover { transform: scale(1.05); }
 
         #host-controls {
             margin-top: 20px;
@@ -157,15 +168,17 @@
             background: #f0c040;
             color: black;
             font-weight: bold;
-            border-radius: 10px;
+            border-radius: 50px;
             display: none;
             cursor: pointer;
             animation: pulse 1s infinite;
+            text-align: center;
+            width: 100%;
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.02); }
             100% { transform: scale(1); }
         }
 
@@ -178,21 +191,24 @@
 <body>
 
     <div id="overlay">
-        <h1 style="margin-bottom: 20px; color: var(--gold);">KİM MİLYONER OLMAK İSTER?</h1>
-        <button class="start-btn" onclick="initRole('yarismaci')">YARIŞMACI OLARAK BAŞLA</button>
-        <button class="start-btn" style="background: #3a3a9a; color: white;" onclick="initRole('sunucu')">SUNUCU OLARAK BAŞLA</button>
-        <p style="margin-top: 20px; font-size: 12px; opacity: 0.7;">(İki farklı sekme açıp birini sunucu diğerini yarışmacı yapabilirsiniz)</p>
+        <div class="entry-card">
+            <h1 style="margin-bottom: 30px; color: var(--gold); letter-spacing: 2px;">KİM MİLYONER OLMAK İSTER?</h1>
+            <button class="start-btn" onclick="initRole('sunucu')">🎤 SUNUCU GİRİŞİ</button>
+            <br>
+            <button class="start-btn" style="background: #fff; color: #020230;" onclick="initRole('yarismaci')">🙋‍♂️ YARIŞMACI GİRİŞİ</button>
+            <p style="margin-top: 25px; font-size: 13px; color: #888;">(Lütfen bir sekmede sunucu, diğerinde yarışmacı açın)</p>
+        </div>
     </div>
 
     <div id="game-container">
         <div class="main-area">
             <div class="joker-container">
-                <div class="joker" id="joker-50" onclick="use5050()">50:50</div>
-                <div class="joker" id="joker-audience" onclick="useAudience()">👥</div>
-                <div class="joker" id="joker-phone" onclick="usePhone()">📞</div>
+                <div class="joker" id="joker-50">50:50</div>
+                <div class="joker" id="joker-audience">👥</div>
+                <div class="joker" id="joker-phone">📞</div>
             </div>
 
-            <div class="question-box" id="question-text">Soru bekleniyor...</div>
+            <div class="question-box" id="question-text">Soru yükleniyor...</div>
 
             <div class="answers-grid">
                 <button class="answer-btn" id="btn0" onclick="playerSelect(0)"><span>A:</span> <label id="ans0"></label></button>
@@ -201,7 +217,7 @@
                 <button class="answer-btn" id="btn3" onclick="playerSelect(3)"><span>D:</span> <label id="ans3"></label></button>
             </div>
 
-            <div id="host-controls" onclick="hostConfirm()">SON KARARINIZ MI? ONAYLA</div>
+            <div id="host-controls" onclick="hostConfirm()">SON KARARINIZ MI? (ONAYLA)</div>
         </div>
 
         <div class="sidebar" id="money-list"></div>
@@ -211,89 +227,89 @@
         const questions = [
             { q: "Gökyüzü neden mavi görünür?", a: ["Işığın yansıması", "Işığın kırılması", "Işığın saçılması", "Atmosferin rengi"], c: 2 },
             { q: "Hangi gezegen halkalarıyla ünlüdür?", a: ["Mars", "Jüpiter", "Uranüs", "Satürn"], c: 3 },
-            { q: "Türkiye'nin en yüksek dağı hangisidir?", a: ["Erciyes", "Ağrı", "Kaçkar", "Uludağ"], c: 1 }
+            { q: "Türkiye'nin en yüksek dağı hangisidir?", a: ["Erciyes", "Ağrı", "Kaçkar", "Uludağ"], c: 1 },
+            { q: "İstiklal Marşı hangi yıl kabul edilmiştir?", a: ["1920", "1921", "1923", "1924"], c: 1 }
         ];
 
         const moneySteps = ["1.000.000 TL", "500.000 TL", "250.000 TL", "125.000 TL", "64.000 TL", "32.000 TL", "16.000 TL", "8.000 TL", "4.000 TL", "2.000 TL", "1.000 TL", "500 TL"];
         
         let role = ""; 
         let currentLevel = 0;
-        let selectedIdx = null;
 
-        // Senkronizasyon için LocalStorage kullanıyoruz (Aynı tarayıcıda iki sekme)
         window.addEventListener('storage', (e) => {
-            if (e.key === 'milyoner_state') {
-                syncState();
-            }
+            if (e.key === 'milyoner_state') syncState();
         });
 
         function initRole(chosenRole) {
             role = chosenRole;
             document.getElementById('overlay').style.display = 'none';
+            document.getElementById('game-container').style.display = 'grid';
+            
             if (role === 'sunucu') {
-                document.title = "Milyoner - SUNUCU PANELİ";
-                alert("Sunucu Modu: Yarışmacının seçimini bekleyin.");
+                document.title = "Milyoner - SUNUCU";
+            } else {
+                document.title = "Milyoner - YARIŞMACI";
             }
+            
             renderMoneySteps();
-            loadQuestion();
+            syncState();
         }
 
         function saveState(data) {
-            localStorage.setItem('milyoner_state', JSON.stringify({
-                level: currentLevel,
-                selected: selectedIdx,
-                confirmed: data.confirmed || false,
-                ...data
-            }));
+            const currentState = JSON.parse(localStorage.getItem('milyoner_state')) || { level: 0, selected: null, confirmed: false };
+            const newState = { ...currentState, ...data };
+            localStorage.setItem('milyoner_state', JSON.stringify(newState));
             syncState();
         }
 
         function syncState() {
-            const state = JSON.parse(localStorage.getItem('milyoner_state'));
-            if (!state) return;
-
+            const state = JSON.parse(localStorage.getItem('milyoner_state')) || { level: 0, selected: null, confirmed: false };
             currentLevel = state.level;
             
-            // Soru ve Şıkları Yükle
             const qData = questions[currentLevel];
+            if (!qData) {
+                alert("Yarışma bitti!");
+                localStorage.clear();
+                location.reload();
+                return;
+            }
+
+            // Soru ve Şıkları güncelle
             document.getElementById('question-text').innerText = qData.q;
             for(let i=0; i<4; i++) {
+                const btn = document.getElementById(`btn${i}`);
                 document.getElementById(`ans${i}`).innerText = qData.a[i];
-                document.getElementById(`btn${i}`).className = 'answer-btn';
-            }
-
-            // Seçim Kontrolü
-            if (state.selected !== null) {
-                document.getElementById(`btn${state.selected}`).classList.add('selected');
-                if (role === 'sunucu' && !state.confirmed) {
-                    document.getElementById('host-controls').style.display = 'block';
-                }
-            } else {
-                document.getElementById('host-controls').style.display = 'none';
-            }
-
-            // Onay Kontrolü (Sonuç Ekranı)
-            if (state.confirmed) {
-                const correctIdx = qData.c;
-                document.getElementById(`btn${correctIdx}`).classList.add('correct');
-                if (state.selected !== correctIdx) {
-                    document.getElementById(`btn${state.selected}`).classList.add('wrong');
-                }
+                btn.className = 'answer-btn';
                 
-                // Bir sonraki soruya geçiş (Sadece sunucu tetikler veya otomatik)
-                if (role === 'sunucu') {
-                    setTimeout(() => {
-                        if (state.selected === correctIdx) {
-                            currentLevel++;
-                            saveState({ level: currentLevel, selected: null, confirmed: false });
-                        } else {
-                            alert("Yarışma Bitti!");
-                            localStorage.clear();
-                            location.reload();
-                        }
-                    }, 3000);
+                if (state.selected === i) btn.classList.add('selected');
+                
+                if (state.confirmed) {
+                    if (i === qData.c) btn.classList.add('correct');
+                    else if (state.selected === i) btn.classList.add('wrong');
                 }
             }
+
+            // Sunucu Kontrol Paneli
+            const hostBtn = document.getElementById('host-controls');
+            if (role === 'sunucu' && state.selected !== null && !state.confirmed) {
+                hostBtn.style.display = 'block';
+            } else {
+                hostBtn.style.display = 'none';
+            }
+
+            // Doğru cevap sonrası ilerleme (Sunucu tetikler)
+            if (state.confirmed && role === 'sunucu') {
+                setTimeout(() => {
+                    if (state.selected === qData.c) {
+                        saveState({ level: currentLevel + 1, selected: null, confirmed: false });
+                    } else {
+                        alert("Yarışmacı yanlış cevap verdi. Yarışma sona erdi.");
+                        localStorage.clear();
+                        location.reload();
+                    }
+                }, 4000);
+            }
+
             renderMoneySteps();
         }
 
@@ -301,19 +317,13 @@
             if (role !== 'yarismaci') return;
             const state = JSON.parse(localStorage.getItem('milyoner_state')) || {};
             if (state.confirmed) return;
-
-            selectedIdx = idx;
-            saveState({ level: currentLevel, selected: idx, confirmed: false });
+            
+            saveState({ selected: idx });
         }
 
         function hostConfirm() {
             if (role !== 'sunucu') return;
-            const state = JSON.parse(localStorage.getItem('milyoner_state'));
-            saveState({ ...state, confirmed: true });
-        }
-
-        function loadQuestion() {
-            syncState();
+            saveState({ confirmed: true });
         }
 
         function renderMoneySteps() {
@@ -328,12 +338,6 @@
                 list.appendChild(div);
             });
         }
-
-        // Jokerler (Basitleştirilmiş)
-        function use5050() { alert("Jokerler bu modda manuel yönetilir."); }
-        function useAudience() { alert("Jokerler bu modda manuel yönetilir."); }
-        function usePhone() { alert("Jokerler bu modda manuel yönetilir."); }
-
     </script>
 </body>
 </html>
