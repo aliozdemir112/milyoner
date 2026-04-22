@@ -42,13 +42,13 @@
     cursor: pointer; letter-spacing: 1px;
     transition: all 0.2s; margin-bottom: 10px;
     font-family: Georgia, serif;
+    position: relative; z-index: 10;
   }
   .btn:hover { transform: scale(1.02); opacity: 0.9; }
   .btn-altin { background: linear-gradient(135deg, #c8a020, #f0c040); color: #000; box-shadow: 0 0 20px rgba(200,160,32,0.4); }
   .btn-mavi { background: linear-gradient(135deg, #1a3a6a, #2a5a9a); color: #fff; border: 2px solid #4a7aaa; }
   .btn-yesil { background: linear-gradient(135deg, #1a5a3a, #2a8a5a); color: #fff; }
   .btn-disabled { background: rgba(50,50,50,0.5); color: #555; cursor: not-allowed; border: 2px solid #333; }
-  .btn-disabled:hover { transform: none; opacity: 1; }
   .kart {
     background: linear-gradient(135deg, rgba(10,30,60,0.9), rgba(5,15,40,0.9));
     border: 2px solid #2a4a7a; border-radius: 16px;
@@ -63,41 +63,37 @@
     font-size: clamp(12px, 1.8vw, 15px); text-align: left;
     display: flex; align-items: center; gap: 8px;
     transition: all 0.2s; font-family: Georgia, serif;
+    position: relative; z-index: 20;
+    pointer-events: auto;
   }
-  .sik:hover:not(:disabled) { border-color: #c8a020; }
+  .sik:hover:not(:disabled) { border-color: #c8a020; background: rgba(200,160,32,0.1); }
   .sik-harf {
     background: rgba(200,160,32,0.3); border-radius: 5px;
     padding: 2px 7px; font-size: 11px; font-weight: bold;
     color: #c8a020; flex-shrink: 0;
   }
-  .sik-secili { background: #c8a020 !important; border-color: #f0c040 !important; box-shadow: 0 0 18px rgba(200,160,32,0.4); }
+  .sik-secili { background: #c8a020 !important; border-color: #f0c040 !important; color: #000 !important; }
   .sik-dogru { background: #1a7a1a !important; border-color: #40ff40 !important; }
   .sik-yanlis { background: #8a1a1a !important; border-color: #ff4040 !important; }
-  .sik-gizli { opacity: 0.1; pointer-events: none; }
+  .sik-gizli { opacity: 0.1; pointer-events: none; visibility: hidden; }
   .odul-bar { display: flex; gap: 3px; margin-bottom: 14px; flex-wrap: wrap; }
   .odul-item {
     flex: 1; min-width: 34px; text-align: center;
     padding: 3px 1px; border-radius: 4px; font-size: 8px;
     background: rgba(255,255,255,0.04); border: 1px solid transparent; color: #555;
-    transition: all 0.3s;
   }
   .odul-aktif { background: rgba(200,160,32,0.4) !important; border-color: #c8a020 !important; color: #f0c040 !important; }
-  .odul-gecti { background: rgba(200,160,32,0.15) !important; color: #888 !important; }
-  .odul-guvenli { background: rgba(0,80,0,0.4) !important; border-color: #2a6a2a !important; }
   .jokerler { display: flex; gap: 8px; margin-bottom: 14px; justify-content: center; flex-wrap: wrap; }
   .joker-btn {
     padding: 8px 14px; border-radius: 50px; font-size: 12px; font-weight: bold;
     background: linear-gradient(135deg, #1a3a6a, #2a5a9a); border: 2px solid #4a7aaa;
     color: #fff; cursor: pointer; transition: all 0.2s; font-family: Georgia, serif;
+    z-index: 30;
   }
-  .joker-btn:hover { transform: scale(1.05); }
-  .joker-kullanildi { background: rgba(40,40,40,0.5) !important; border-color: #333 !important; color: #444 !important; cursor: not-allowed !important; pointer-events: none; }
+  .joker-kullanildi { opacity: 0.3; cursor: not-allowed !important; pointer-events: none; }
   .seyirci-bar { display: flex; gap: 8px; align-items: flex-end; justify-content: center; height: 70px; }
   .seyirci-kolon { text-align: center; flex: 1; }
-  .info-box {
-    background: rgba(255,255,255,0.04); border: 1px solid #2a3a5a;
-    border-radius: 16px; padding: 20px; margin-bottom: 14px;
-  }
+  .info-box { background: rgba(255,255,255,0.04); border: 1px solid #2a3a5a; border-radius: 16px; padding: 20px; margin-bottom: 14px; }
   .vs-kutu { display: flex; justify-content: space-around; align-items: center; }
   .oyuncu-kutu { text-align: center; }
   .oyuncu-label { font-size: 11px; color: #888; letter-spacing: 2px; margin-bottom: 6px; }
@@ -107,7 +103,6 @@
   .sonuc-emoji { font-size: 80px; text-align: center; margin-bottom: 16px; }
   .sonuc-baslik { font-size: clamp(20px, 4vw, 36px); text-align: center; margin-bottom: 10px; }
   .sonuc-kazanim { font-size: 28px; color: #f0c040; font-weight: bold; text-align: center; margin-bottom: 8px; }
-  .ayrac { color: #333; font-size: 14px; text-align: center; margin: 10px 0; }
   .link-kutu {
     background: rgba(200,160,32,0.1); border: 1px solid #c8a020;
     border-radius: 10px; padding: 12px; margin-bottom: 12px;
@@ -115,8 +110,6 @@
   }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
   .pulse { animation: pulse 1.5s infinite; }
-  .ust-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-  .hidden { display: none; }
   .oyun-layout { display: flex; gap: 16px; width: 100%; max-width: 960px; align-items: flex-start; }
   .sol-panel {
     width: 180px; flex-shrink: 0;
@@ -142,8 +135,7 @@
 </head>
 <body>
 
-<div class="ekran" id="app">
-  </div>
+<div class="ekran" id="app"></div>
 
 <script>
 const FIREBASE_URL = "https://kim-milyoner-olmak-default-rtdb.europe-west1.firebasedatabase.app";
@@ -166,13 +158,12 @@ const SORULAR = [
   { soru: "Türkiye Cumhuriyeti hangi yılda kuruldu?", secenekler: ["1920", "1921", "1923", "1922"], dogru: 2 },
 ];
 
-const ODULLER = ["1.000 TL","2.000 TL","3.000 TL","5.000 TL","10.000 TL","20.000 TL","40.000 TL","75.000 TL","150.000 TL","300.000 TL","500.000 TL","750.000 TL","1.000.000 TL","500.000 TL","1.000.000 TL"];
+const ODULLER = ["1.000 TL","2.000 TL","3.000 TL","5.000 TL","10.000 TL","20.000 TL","40.000 TL","75.000 TL","150.000 TL","300.000 TL","500.000 TL","750.000 TL","1.000.000 TL"];
 const HARFLER = ["A","B","C","D"];
-const GUVENLI = [4, 9, 14];
+const GUVENLI = [1, 6, 11]; // Soru indeksleri (2, 7 ve 12. sorular)
 
-// — State —
 let state = {
-  ekran: "giris", // giris | katil | bekle | oyun | bitti
+  ekran: "giris",
   rol: null,
   odaId: null,
   oyun: null,
@@ -181,13 +172,11 @@ let state = {
 };
 let pollingInterval = null;
 const myId = Math.random().toString(36).substr(2, 9);
-
-// — Süre Değişkenleri —
 let localSoruIndex = -1;
 let kalanSure = 60;
 let timerInterval = null;
 
-// — Firebase —
+// Firebase Helpers
 async function fbSet(path, data) {
   const r = await fetch(`${FIREBASE_URL}/${path}.json`, {
     method: "PUT", body: JSON.stringify(data),
@@ -207,11 +196,8 @@ async function fbGet(path) {
   return r.json();
 }
 
-function generateOdaId() {
-  return Math.random().toString(36).substr(2, 6).toUpperCase();
-}
+function generateOdaId() { return Math.random().toString(36).substr(2, 6).toUpperCase(); }
 
-// — Polling —
 function pollingBaslat(odaId) {
   if (pollingInterval) clearInterval(pollingInterval);
   pollingInterval = setInterval(async () => {
@@ -219,16 +205,17 @@ function pollingBaslat(odaId) {
       const data = await fbGet(`odalar/${odaId}`);
       if (!data) return;
       state.oyun = data;
-      // Ekran geçişleri
-      if (data.ekran === "oyun" && state.ekran !== "oyun") { state.ekran = "oyun"; render(); }
-      else if (data.ekran === "bitti" && state.ekran !== "bitti") { state.ekran = "bitti"; render(); }
-      else if (data.ekran === "bekle" && state.ekran === "oyun") { state.ekran = "bekle"; render(); }
-      else { renderOyunIci(); }
+      if (data.ekran !== state.ekran) {
+        state.ekran = data.ekran;
+        render();
+      } else {
+        renderOyunIci();
+      }
     } catch(e) {}
   }, 1000);
 }
 
-// — Aksiyonlar —
+// Actions
 async function odaOlustur() {
   const isim = document.getElementById("isim-input").value.trim() || "Sunucu";
   state.isim = isim;
@@ -236,62 +223,45 @@ async function odaOlustur() {
   state.odaId = odaId;
   const durum = {
     ekran: "bekle", soruIndex: 0, secilenSik: null, onaylandi: false, sonuc: null,
-    sunucu: { id: myId, isim },
-    yarismaci: null,
+    sunucu: { id: myId, isim }, yarismaci: null,
     jokerler: { elleYarida: true, yuzdeElli: true, seyirciyeSor: true },
     yuzdeElliGizli: [], seyirciData: null, kazanim: "0 TL"
   };
-  try {
-    await fbSet(`odalar/${odaId}`, durum);
-    state.oyun = durum;
-    state.rol = "sunucu";
-    state.ekran = "bekle";
-    pollingBaslat(odaId);
-    render();
-  } catch(e) {
-    alert("Firebase bağlantı hatası! İnternet bağlantını kontrol et.");
-  }
+  await fbSet(`odalar/${odaId}`, durum);
+  state.rol = "sunucu";
+  state.ekran = "bekle";
+  pollingBaslat(odaId);
+  render();
 }
 
 async function odayaKatil() {
   const isim = document.getElementById("isim-input").value.trim() || "Yarışmacı";
   state.isim = isim;
-  try {
-    const data = await fbGet(`odalar/${state.odaId}`);
-    if (!data) { alert("Oda bulunamadı!"); return; }
-    if (data.yarismaci) { alert("Bu odada zaten bir yarışmacı var!"); return; }
-    await fbUpdate(`odalar/${state.odaId}`, { yarismaci: { id: myId, isim } });
-    state.oyun = { ...data, yarismaci: { id: myId, isim } };
-    state.rol = "yarismaci";
-    state.ekran = "bekle";
-    pollingBaslat(state.odaId);
-    render();
-  } catch(e) {
-    alert("Bağlantı hatası!");
-  }
+  const data = await fbGet(`odalar/${state.odaId}`);
+  if (!data) { alert("Oda bulunamadı!"); return; }
+  await fbUpdate(`odalar/${state.odaId}`, { yarismaci: { id: myId, isim } });
+  state.rol = "yarismaci";
+  state.ekran = "bekle";
+  pollingBaslat(state.odaId);
+  render();
 }
 
 async function oyunuBaslat() {
-  await fbUpdate(`odalar/${state.odaId}`, { ekran: "oyun", soruIndex: 0, secilenSik: null, onaylandi: false, sonuc: null });
-}
-
-async function sikSecWrapper(idx, tiklanabilir) {
-  if (!tiklanabilir || kalanSure <= 0) return;
-  await sikSec(idx);
+  await fbUpdate(`odalar/${state.odaId}`, { ekran: "oyun", soruIndex: 0, secilenSik: null, onaylandi: false });
 }
 
 async function sikSec(idx) {
-  const d = state.oyun;
-  if (!d || d.onaylandi) return;
-  if (d.yuzdeElliGizli && d.yuzdeElliGizli.includes(idx)) return;
+  if (state.rol !== "yarismaci" || state.oyun.onaylandi || kalanSure <= 0) return;
+  if (state.oyun.yuzdeElliGizli && state.oyun.yuzdeElliGizli.includes(idx)) return;
   await fbUpdate(`odalar/${state.odaId}`, { secilenSik: idx });
 }
 
 async function cevapOnayla() {
   const d = state.oyun;
-  if (d.secilenSik === null || d.secilenSik === undefined) return;
+  if (d.secilenSik === null) return;
   await fbUpdate(`odalar/${state.odaId}`, { onaylandi: true });
   const soru = SORULAR[d.soruIndex];
+  
   setTimeout(async () => {
     if (d.secilenSik === soru.dogru) {
       if (d.soruIndex === SORULAR.length - 1) {
@@ -307,13 +277,13 @@ async function cevapOnayla() {
       const kazanim = guvenliIdx !== undefined ? ODULLER[guvenliIdx] : "0 TL";
       await fbUpdate(`odalar/${state.odaId}`, { ekran: "bitti", sonuc: "yanlis", kazanim });
     }
-  }, 1800);
+  }, 2000);
 }
 
 async function jokeriKullan(tip) {
   const d = state.oyun;
   if (!d.jokerler[tip]) return;
-  const guncelle = { jokerler: { ...d.jokerler, [tip]: false } };
+  let guncelle = { [`jokerler/${tip}`]: false };
   if (tip === "yuzdeElli") {
     const soru = SORULAR[d.soruIndex];
     const yanlis = [0,1,2,3].filter(i => i !== soru.dogru).sort(() => Math.random()-0.5).slice(0,2);
@@ -322,51 +292,20 @@ async function jokeriKullan(tip) {
   if (tip === "seyirciyeSor") {
     const soru = SORULAR[d.soruIndex];
     let oranlar = [0,0,0,0];
-    oranlar[soru.dogru] = Math.floor(Math.random()*30)+55;
+    oranlar[soru.dogru] = Math.floor(Math.random()*30)+50;
     let kalan = 100 - oranlar[soru.dogru];
     [0,1,2,3].filter(i=>i!==soru.dogru).forEach((i,idx,arr)=>{
-      if(idx===arr.length-1){ oranlar[i]=kalan; }
-      else { const p=Math.floor(Math.random()*kalan*0.6); oranlar[i]=p; kalan-=p; }
+      if(idx===arr.length-1) oranlar[i]=kalan;
+      else { const p=Math.floor(Math.random()*kalan*0.7); oranlar[i]=p; kalan-=p; }
     });
     guncelle.seyirciData = oranlar;
   }
   if (tip === "elleYarida") {
-    const guvenliIdx = [...GUVENLI].reverse().find(g => g < d.soruIndex);
-    const kazanim = guvenliIdx !== undefined ? ODULLER[guvenliIdx] : "0 TL";
-    await fbUpdate(`odalar/${state.odaId}`, { ...guncelle, ekran: "bitti", sonuc: "elleyarida", kazanim });
+    const kazanim = d.soruIndex > 0 ? ODULLER[d.soruIndex-1] : "0 TL";
+    await fbUpdate(`odalar/${state.odaId}`, { ekran: "bitti", sonuc: "elleyarida", kazanim });
     return;
   }
   await fbUpdate(`odalar/${state.odaId}`, guncelle);
-}
-
-async function linkkopyala() {
-  const link = window.location.href.split('?')[0] + '?oda=' + state.odaId;
-  try {
-    await navigator.clipboard.writeText(link);
-    state.kopyalandi = true;
-    render();
-    setTimeout(() => { state.kopyalandi = false; render(); }, 2000);
-  } catch(e) {
-    prompt("Bu linki kopyala:", link);
-  }
-}
-
-async function yenidenOyna() {
-  const d = state.oyun;
-  const durum = {
-    ekran: "bekle", soruIndex: 0, secilenSik: null, onaylandi: false, sonuc: null,
-    sunucu: d.sunucu, yarismaci: d.yarismaci,
-    jokerler: { elleYarida: true, yuzdeElli: true, seyirciyeSor: true },
-    yuzdeElliGizli: [], seyirciData: null, kazanim: "0 TL"
-  };
-  await fbSet(`odalar/${state.odaId}`, durum);
-  state.ekran = "bekle";
-  render();
-}
-
-function odaIdUrlden() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("oda");
 }
 
 function render() {
@@ -376,249 +315,109 @@ function render() {
   if (ekran === "giris") {
     app.innerHTML = `
       <div style="text-align:center">
-        <div style="font-size:12px;letter-spacing:8px;color:#c8a020;margin-bottom:8px">ONLINE CANLI</div>
         <h1 class="baslik">Kim Milyoner<br>Olmak İster?</h1>
-        <div class="altyazi">İki kişilik online versiyon</div>
-        <input id="isim-input" placeholder="İsminizi girin..." value="${state.isim}">
-        <button class="btn btn-altin" onclick="odaOlustur()">🎙️ Sunucu Ol (Oda Aç)</button>
-      </div>
-    `;
-  }
-
-  else if (ekran === "katil") {
+        <input id="isim-input" placeholder="İsminizi girin...">
+        <button class="btn btn-altin" onclick="odaOlustur()">🎙️ Sunucu Ol</button>
+      </div>`;
+  } else if (ekran === "katil") {
     app.innerHTML = `
       <div style="text-align:center">
-        <div style="font-size:48px;margin-bottom:16px">🎯</div>
-        <h2 style="color:#f0c040;margin-bottom:8px">Odaya Katıl</h2>
-        <div style="color:#888;margin-bottom:24px;font-size:14px">Oda: <b style="color:#c8a020">${state.odaId}</b></div>
-        <input id="isim-input" placeholder="İsminizi girin..." value="${state.isim}">
+        <h2 style="color:#f0c040">Odaya Katıl: ${state.odaId}</h2>
+        <input id="isim-input" placeholder="İsminizi girin...">
         <button class="btn btn-yesil" onclick="odayaKatil()">✅ Katıl</button>
-      </div>
-    `;
-  }
-
-  else if (ekran === "bekle") {
+      </div>`;
+  } else if (ekran === "bekle") {
     const d = state.oyun;
-    const link = window.location.href.split('?')[0] + '?oda=' + state.odaId;
     app.innerHTML = `
       <div style="text-align:center">
-        <div style="font-size:48px;margin-bottom:12px">⏳</div>
-        <h2 style="color:#f0c040;margin-bottom:4px">Bekleme Odası</h2>
-        <div style="color:#c8a020;font-size:13px;letter-spacing:3px;margin-bottom:20px">ODA: ${state.odaId}</div>
+        <h2 style="color:#f0c040">Bekleme Odası</h2>
         <div class="info-box">
           <div class="vs-kutu">
-            <div class="oyuncu-kutu">
-              <div class="oyuncu-label">SUNUCU 🎙️</div>
-              <div class="oyuncu-isim" style="color:${d.sunucu ? '#f0c040' : '#444'}">${d.sunucu?.isim || '—'}</div>
-            </div>
-            <div style="color:#333;font-size:24px">VS</div>
-            <div class="oyuncu-kutu">
-              <div class="oyuncu-label">YARIŞMACI 🎯</div>
-              <div class="oyuncu-isim" style="color:${d.yarismaci ? '#4af0a0' : '#444'}">${d.yarismaci?.isim || 'Bekleniyor...'}</div>
-            </div>
+            <div>${d.sunucu?.isim || '—'}<br><small>SUNUCU</small></div>
+            <div>VS</div>
+            <div>${d.yarismaci?.isim || 'Bekleniyor...'}<br><small>YARIŞMACI</small></div>
           </div>
         </div>
-        ${state.rol === "sunucu" ? `
-          <div class="link-kutu">🔗 ${link}</div>
-          <button class="btn btn-mavi" onclick="linkkopyala()">${state.kopyalandi ? '✅ Kopyalandı!' : '🔗 Davet Linkini Kopyala'}</button>
-          ${d.yarismaci ? `<button class="btn btn-altin" onclick="oyunuBaslat()">▶️ Oyunu Başlat</button>` : `<div style="color:#666;font-size:13px;margin-top:8px">Arkadaşın katılınca başlatabilirsin</div>`}
-        ` : `<div class="bilgi-kutu">Sunucu oyunu başlatmayı bekliyor...</div>`}
-      </div>
-    `;
-  }
-
-  else if (ekran === "oyun") {
+        ${state.rol === "sunucu" && d.yarismaci ? `<button class="btn btn-altin" onclick="oyunuBaslat()">▶️ Başlat</button>` : `<p>Sunucu bekleniyor...</p>`}
+      </div>`;
+  } else if (ekran === "oyun") {
     renderOyunIci();
-  }
-
-  else if (ekran === "bitti") {
-    if (timerInterval) clearInterval(timerInterval);
+  } else if (ekran === "bitti") {
     const d = state.oyun;
-    const emoji = d.sonuc === "kazandi" ? "🏆" : d.sonuc === "elleyarida" ? "✋" : "❌";
-    const renk = d.sonuc === "kazandi" ? "linear-gradient(135deg,#f0c040,#fff8dc)"
-      : d.sonuc === "elleyarida" ? "linear-gradient(135deg,#f08040,#ffc080)"
-      : "linear-gradient(135deg,#ff6060,#ff9090)";
-    const baslik = d.sonuc === "kazandi" ? `${d.yarismaci?.isim} MİLYONER OLDU! 🎉`
-      : d.sonuc === "elleyarida" ? "Elle Yarıda Bırakıldı" : "Yanlış Cevap!";
     app.innerHTML = `
       <div style="text-align:center">
-        <div class="sonuc-emoji">${emoji}</div>
-        <div class="sonuc-baslik" style="background:${renk};-webkit-background-clip:text;-webkit-text-fill-color:transparent">${baslik}</div>
+        <div class="sonuc-emoji">${d.sonuc === 'kazandi' ? '🏆' : '❌'}</div>
+        <div class="sonuc-baslik">${d.sonuc === 'kazandi' ? 'TEBRİKLER!' : 'OYUN BİTTİ'}</div>
         <div class="sonuc-kazanim">${d.kazanim}</div>
-        <div style="color:#666;font-size:14px;margin-bottom:28px">
-          ${d.sonuc === "kazandi" ? `Tebrikler ${d.yarismaci?.isim}!` : `${(d.soruIndex||0)+1}. soruda elendi.`}
-        </div>
-        ${state.rol === "sunucu" ? `<button class="btn btn-altin" onclick="yenidenOyna()">🔄 Yeniden Oyna</button>` : `<div class="bilgi-kutu">Sunucu yeniden oynayabilir...</div>`}
-      </div>
-    `;
+        <button class="btn btn-altin" onclick="location.reload()">🔄 Ana Sayfa</button>
+      </div>`;
   }
 }
 
 function renderOyunIci() {
   const app = document.getElementById("app");
   const d = state.oyun;
-  if (!d) return;
+  if (!d || state.ekran !== "oyun") return;
   const soru = SORULAR[d.soruIndex];
-  const { rol } = state;
 
-  // Süre Mantığı
   if (localSoruIndex !== d.soruIndex) {
     localSoruIndex = d.soruIndex;
-    kalanSure = 60; 
+    kalanSure = 60;
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
-      if (state.ekran === "oyun" && !state.oyun.onaylandi) {
-        if (kalanSure > 0) kalanSure--;
-        const sayacEl = document.getElementById("sure-sayaci");
-        if (sayacEl) {
-          sayacEl.innerText = kalanSure;
-          if (kalanSure <= 10) sayacEl.style.color = "#ff4040";
-        }
+      if (!state.oyun.onaylandi && kalanSure > 0) {
+        kalanSure--;
+        const el = document.getElementById("sure-sayaci");
+        if (el) el.innerText = kalanSure;
       }
     }, 1000);
   }
 
-  // Ödül barı
-  let odulBar = '<div class="odul-bar">';
-  ODULLER.forEach((o, i) => {
-    let cls = "odul-item";
-    if (i === d.soruIndex) cls += " odul-aktif";
-    else if (GUVENLI.includes(i)) cls += " odul-guvenli";
-    else if (i < d.soruIndex) cls += " odul-gecti";
-    const kisa = o.replace(" TL","").replace(".000.000","M").replace(".000","K");
-    odulBar += `<div class="${cls}">${kisa}</div>`;
-  });
-  odulBar += '</div>';
-
-  // Jokerler (Yarışmacı da görür ama tıklayamaz)
-  let jokerlerHtml = '<div class="jokerler">';
-  const jokerList = [
-    { key: "elleYarida", label: "✋ Elle Yarıda" },
-    { key: "yuzdeElli", label: "50:50" },
-    { key: "seyirciyeSor", label: "👥 Seyirci" },
-  ];
-  jokerList.forEach(j => {
-    const aktif = d.jokerler && d.jokerler[j.key];
-    if (rol === "sunucu") {
-      jokerlerHtml += `<button class="joker-btn ${aktif ? '' : 'joker-kullanildi'}" onclick="${aktif ? `jokeriKullan('${j.key}')` : ''}">${j.label}</button>`;
-    } else {
-      jokerlerHtml += `<button class="joker-btn ${aktif ? '' : 'joker-kullanildi'}" style="cursor:default; pointer-events:none;">${j.label}</button>`;
-    }
-  });
-  jokerlerHtml += '</div>';
-
-  // Seyirci
-  let seyirciHtml = '';
-  if (d.seyirciData) {
-    seyirciHtml = `
-      <div class="kart" style="margin-bottom:12px">
-        <div style="text-align:center;margin-bottom:10px;color:#8ab4e4;font-size:12px">👥 SEYİRCİ YANITI</div>
-        <div class="seyirci-bar">
-          ${d.seyirciData.map((oran, i) => `
-            <div class="seyirci-kolon">
-              <div style="font-size:10px;color:#c8a020;margin-bottom:3px">${oran}%</div>
-              <div style="height:${oran*0.55}px;min-height:3px;background:linear-gradient(180deg,#4a8aaa,#2a5a7a);border-radius:3px 3px 0 0"></div>
-              <div style="font-size:11px;color:#888;margin-top:3px">${HARFLER[i]}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
-
-  // Süre UI
-  let sureHtml = `<div style="text-align:center; font-size:24px; font-weight:bold; margin-bottom:12px;">⏳ Süre: <span id="sure-sayaci" style="color:${kalanSure <= 10 ? '#ff4040' : '#f0c040'}">${kalanSure}</span></div>`;
-
-  // Şıklar
   let siklarHtml = '<div class="siklar">';
   soru.secenekler.forEach((s, i) => {
     const gizli = d.yuzdeElliGizli && d.yuzdeElliGizli.includes(i);
-    if (gizli) {
-      siklarHtml += `<div class="sik sik-gizli"><span class="sik-harf">${HARFLER[i]}</span>${s}</div>`;
-    } else {
-      let ekstraCls = "";
-      if (d.onaylandi) {
-        if (i === soru.dogru) ekstraCls = " sik-dogru";
-        else if (i === d.secilenSik) ekstraCls = " sik-yanlis";
-      } else {
-        if (i === d.secilenSik) ekstraCls = " sik-secili";
-      }
-      const tiklanabilir = rol === "yarismaci" && !d.onaylandi && !gizli && kalanSure > 0;
-      siklarHtml += `<button class="sik${ekstraCls}" onclick="sikSecWrapper(${i}, ${tiklanabilir})" style="cursor:${tiklanabilir?'pointer':'default'}">
-        <span class="sik-harf">${HARFLER[i]}</span>${s}
-      </button>`;
-    }
+    let cls = "sik";
+    if (gizli) cls += " sik-gizli";
+    else if (d.onaylandi) {
+      if (i === soru.dogru) cls += " sik-dogru";
+      else if (i === d.secilenSik) cls += " sik-yanlis";
+    } else if (i === d.secilenSik) cls += " sik-secili";
+
+    siklarHtml += `<button class="${cls}" onclick="sikSec(${i})">
+      <span class="sik-harf">${HARFLER[i]}</span> ${s}
+    </button>`;
   });
   siklarHtml += '</div>';
 
-  // Alt buton
-  let altButon = '';
-  if (rol === "sunucu" && (d.secilenSik !== null && d.secilenSik !== undefined) && !d.onaylandi) {
-    altButon = `<button class="btn btn-altin pulse" style="font-size:18px; padding:20px" onclick="cevapOnayla()">✅ SON KARARI ONAYLA (Cevabı Gör)</button>`;
-  } else if (rol === "yarismaci" && (d.secilenSik !== null && d.secilenSik !== undefined) && !d.onaylandi) {
-    altButon = `<div class="bilgi-kutu">Seçimin gönderildi, sunucu onaylıyor...</div>`;
-  } else if (rol === "yarismaci" && (d.secilenSik === null || d.secilenSik === undefined)) {
-    altButon = `<div class="bilgi-kutu pulse" style="color:#4af0a0">${kalanSure > 0 ? "⬆️ Bir şık seç!" : "Süre doldu!"}</div>`;
-  } else if (rol === "sunucu" && (d.secilenSik === null || d.secilenSik === undefined)) {
-    altButon = `<div class="bilgi-kutu">Yarışmacının cevap vermesi bekleniyor...</div>`;
-  }
-
-  // Sol panel
-  let solPanel = `
-    <div class="sol-panel">
-      <div class="sol-panel-baslik">OYUNCULAR</div>
-      <div class="oyuncu-kart" style="border-color:#c8a020">
-        <div class="oyuncu-kart-isim" style="color:#f0c040">🎙️ ${d.sunucu?.isim || 'Sunucu'}</div>
-        <div class="oyuncu-kart-rol">SUNUCU</div>
-      </div>
-      <div class="oyuncu-kart" style="border-color:#4af0a0">
-        <div class="oyuncu-kart-isim" style="color:#4af0a0">🎯 ${d.yarismaci?.isim || 'Yarışmacı'}</div>
-        <div class="oyuncu-kart-rol">YARIŞMACI</div>
-      </div>
-      <div class="odul-listesi">
-        <div class="sol-panel-baslik" style="margin-top:8px">ÖDÜLLER</div>
-        ${[...ODULLER].reverse().map((o, ri) => {
-          const i = ODULLER.length - 1 - ri;
-          let cls = "odul-satir";
-          if (i === d.soruIndex) cls += " odul-satir-aktif";
-          else if (GUVENLI.includes(i)) cls += " odul-satir-guvenli";
-          else if (i < d.soruIndex) cls += " odul-satir-gecti";
-          return `<div class="${cls}">${GUVENLI.includes(i)?'🔒 ':''}${o}</div>`;
-        }).join('')}
-      </div>
-    </div>
-  `;
-  
   app.innerHTML = `
     <div class="oyun-layout">
-      ${solPanel}
+      <div class="sol-panel">
+        <div class="sol-panel-baslik">ÖDÜLLER</div>
+        ${[...ODULLER].reverse().map((o, idx) => {
+          const i = ODULLER.length - 1 - idx;
+          let cls = "odul-satir";
+          if (i === d.soruIndex) cls += " odul-satir-aktif";
+          return `<div class="${cls}">${o}</div>`;
+        }).join('')}
+      </div>
       <div class="sag-icerik">
-        <div class="ust-bar">
-          <div style="font-size:13px;color:#c8a020;letter-spacing:2px">SORU ${d.soruIndex+1}/${SORULAR.length}</div>
-          <div style="font-size:16px;font-weight:bold;color:#f0c040">🏆 ${ODULLER[d.soruIndex]}</div>
-        </div>
-        ${sureHtml}
-        ${jokerlerHtml}
-        ${seyirciHtml}
-        <div class="rol-badge" style="color:${rol==='sunucu'?'#c8a020':'#4af0a0'}">
-          ${rol==='sunucu'?'🎙️ SUNUCU — Joker kullan, cevabı onayla':'🎯 YARIŞMACI — Şık seç!'}
+        <div style="text-align:center; font-size:20px; margin-bottom:10px;">⏳ <span id="sure-sayaci">${kalanSure}</span></div>
+        <div class="jokerler">
+          <button class="joker-btn ${d.jokerler.yuzdeElli?'':'joker-kullanildi'}" onclick="jokeriKullan('yuzdeElli')">50:50</button>
+          <button class="joker-btn ${d.jokerler.seyirciyeSor?'':'joker-kullanildi'}" onclick="jokeriKullan('seyirciyeSor')">👥 Seyirci</button>
+          <button class="joker-btn ${d.jokerler.elleYarida?'':'joker-kullanildi'}" onclick="jokeriKullan('elleYarida')">✋ Çekil</button>
         </div>
         <div class="kart"><p class="soru-text">${soru.soru}</p></div>
         ${siklarHtml}
-        ${altButon}
+        ${state.rol === "sunucu" && d.secilenSik !== null && !d.onaylandi ? 
+          `<button class="btn btn-altin pulse" onclick="cevapOnayla()">✅ SON KARARI ONAYLA</button>` : ''}
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-// — Başlangıç —
-window.onload = function() {
-  const odaIdUrl = odaIdUrlden();
-  if (odaIdUrl) {
-    state.odaId = odaIdUrl;
-    state.ekran = "katil";
-    pollingBaslat(odaIdUrl);
-  }
+window.onload = () => {
+  const oda = new URLSearchParams(window.location.search).get("oda");
+  if (oda) { state.odaId = oda; state.ekran = "katil"; }
   render();
 };
 </script>
