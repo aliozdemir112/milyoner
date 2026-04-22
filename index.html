@@ -1,425 +1,300 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kim Milyoner Olmak İster?</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    min-height: 100vh;
-    background: radial-gradient(ellipse at center, #0a0a2e 0%, #000010 100%);
-    font-family: Georgia, serif;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .ekran { width: 100%; max-width: 700px; }
-  .baslik {
-    font-size: clamp(28px, 6vw, 56px);
-    background: linear-gradient(135deg, #f0c040, #fff8dc, #c8a020);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-align: center;
-    line-height: 1.1;
-    filter: drop-shadow(0 0 20px rgba(200,160,32,0.5));
-    margin-bottom: 8px;
-  }
-  .altyazi { color: #666; font-size: 14px; text-align: center; margin-bottom: 28px; }
-  input {
-    width: 100%; padding: 14px 18px; border-radius: 12px;
-    background: rgba(255,255,255,0.06); border: 2px solid #2a3a5a;
-    color: #fff; font-size: 16px; margin-bottom: 14px;
-    outline: none; font-family: Georgia, serif;
-  }
-  input::placeholder { color: #444; }
-  .btn {
-    width: 100%; padding: 14px 20px; border-radius: 50px;
-    border: none; font-size: 16px; font-weight: bold;
-    cursor: pointer; letter-spacing: 1px;
-    transition: all 0.2s; margin-bottom: 10px;
-    font-family: Georgia, serif;
-    position: relative; z-index: 10;
-  }
-  .btn:hover { transform: scale(1.02); opacity: 0.9; }
-  .btn-altin { background: linear-gradient(135deg, #c8a020, #f0c040); color: #000; box-shadow: 0 0 20px rgba(200,160,32,0.4); }
-  .btn-mavi { background: linear-gradient(135deg, #1a3a6a, #2a5a9a); color: #fff; border: 2px solid #4a7aaa; }
-  .btn-yesil { background: linear-gradient(135deg, #1a5a3a, #2a8a5a); color: #fff; }
-  .btn-disabled { background: rgba(50,50,50,0.5); color: #555; cursor: not-allowed; border: 2px solid #333; }
-  .kart {
-    background: linear-gradient(135deg, rgba(10,30,60,0.9), rgba(5,15,40,0.9));
-    border: 2px solid #2a4a7a; border-radius: 16px;
-    padding: 20px; margin-bottom: 14px;
-    box-shadow: 0 0 40px rgba(30,60,120,0.3);
-  }
-  .soru-text { font-size: clamp(14px, 2.5vw, 19px); line-height: 1.5; color: #e8e8ff; text-align: center; }
-  .siklar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .sik {
-    padding: 13px 16px; border-radius: 12px; border: 2px solid #2a3a5a;
-    background: transparent; color: #fff; cursor: pointer;
-    font-size: clamp(12px, 1.8vw, 15px); text-align: left;
-    display: flex; align-items: center; gap: 8px;
-    transition: all 0.2s; font-family: Georgia, serif;
-    position: relative; z-index: 20;
-    pointer-events: auto;
-  }
-  .sik:hover:not(:disabled) { border-color: #c8a020; background: rgba(200,160,32,0.1); }
-  .sik-harf {
-    background: rgba(200,160,32,0.3); border-radius: 5px;
-    padding: 2px 7px; font-size: 11px; font-weight: bold;
-    color: #c8a020; flex-shrink: 0;
-  }
-  .sik-secili { background: #c8a020 !important; border-color: #f0c040 !important; color: #000 !important; }
-  .sik-dogru { background: #1a7a1a !important; border-color: #40ff40 !important; }
-  .sik-yanlis { background: #8a1a1a !important; border-color: #ff4040 !important; }
-  .sik-gizli { opacity: 0.1; pointer-events: none; visibility: hidden; }
-  .odul-bar { display: flex; gap: 3px; margin-bottom: 14px; flex-wrap: wrap; }
-  .odul-item {
-    flex: 1; min-width: 34px; text-align: center;
-    padding: 3px 1px; border-radius: 4px; font-size: 8px;
-    background: rgba(255,255,255,0.04); border: 1px solid transparent; color: #555;
-  }
-  .odul-aktif { background: rgba(200,160,32,0.4) !important; border-color: #c8a020 !important; color: #f0c040 !important; }
-  .jokerler { display: flex; gap: 8px; margin-bottom: 14px; justify-content: center; flex-wrap: wrap; }
-  .joker-btn {
-    padding: 8px 14px; border-radius: 50px; font-size: 12px; font-weight: bold;
-    background: linear-gradient(135deg, #1a3a6a, #2a5a9a); border: 2px solid #4a7aaa;
-    color: #fff; cursor: pointer; transition: all 0.2s; font-family: Georgia, serif;
-    z-index: 30;
-  }
-  .joker-kullanildi { opacity: 0.3; cursor: not-allowed !important; pointer-events: none; }
-  .seyirci-bar { display: flex; gap: 8px; align-items: flex-end; justify-content: center; height: 70px; }
-  .seyirci-kolon { text-align: center; flex: 1; }
-  .info-box { background: rgba(255,255,255,0.04); border: 1px solid #2a3a5a; border-radius: 16px; padding: 20px; margin-bottom: 14px; }
-  .vs-kutu { display: flex; justify-content: space-around; align-items: center; }
-  .oyuncu-kutu { text-align: center; }
-  .oyuncu-label { font-size: 11px; color: #888; letter-spacing: 2px; margin-bottom: 6px; }
-  .oyuncu-isim { font-size: 18px; }
-  .rol-badge { text-align: center; font-size: 12px; letter-spacing: 2px; margin-bottom: 10px; }
-  .bilgi-kutu { text-align: center; color: #888; font-size: 14px; padding: 10px; }
-  .sonuc-emoji { font-size: 80px; text-align: center; margin-bottom: 16px; }
-  .sonuc-baslik { font-size: clamp(20px, 4vw, 36px); text-align: center; margin-bottom: 10px; }
-  .sonuc-kazanim { font-size: 28px; color: #f0c040; font-weight: bold; text-align: center; margin-bottom: 8px; }
-  .link-kutu {
-    background: rgba(200,160,32,0.1); border: 1px solid #c8a020;
-    border-radius: 10px; padding: 12px; margin-bottom: 12px;
-    font-size: 12px; color: #c8a020; text-align: center; word-break: break-all;
-  }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-  .pulse { animation: pulse 1.5s infinite; }
-  .oyun-layout { display: flex; gap: 16px; width: 100%; max-width: 960px; align-items: flex-start; }
-  .sol-panel {
-    width: 180px; flex-shrink: 0;
-    background: rgba(255,255,255,0.03); border: 1px solid #1a2a4a;
-    border-radius: 16px; padding: 14px;
-  }
-  .sol-panel-baslik { font-size: 10px; color: #666; letter-spacing: 2px; text-align: center; margin-bottom: 8px; }
-  .oyuncu-kart { border-radius: 10px; padding: 10px; text-align: center; border: 1px solid #2a3a5a; margin-bottom: 8px; }
-  .oyuncu-kart-isim { font-size: 14px; font-weight: bold; margin-bottom: 2px; }
-  .oyuncu-kart-rol { font-size: 10px; letter-spacing: 1px; color: #888; }
-  .odul-listesi { margin-top: 8px; }
-  .odul-satir { font-size: 10px; text-align: right; padding: 3px 6px; border-radius: 4px; color: #444; margin-bottom: 2px; }
-  .odul-satir-aktif { background: rgba(200,160,32,0.3); color: #f0c040 !important; font-weight: bold; }
-  .odul-satir-guvenli { color: #2a8a2a !important; }
-  .odul-satir-gecti { color: #666 !important; }
-  .sag-icerik { flex: 1; min-width: 0; }
-  @media (max-width: 640px) {
-    .oyun-layout { flex-direction: column; }
-    .sol-panel { width: 100%; }
-    .odul-listesi { display: none; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kim Milyoner Olmak İster? - Gemini Edition</title>
+    <style>
+        :root {
+            --dark-blue: #020230;
+            --gold: #f0c040;
+            --blue-gradient: linear-gradient(180deg, #101060 0%, #020230 100%);
+            --border-style: 2px solid #3a3a9a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: radial-gradient(circle, #0a0a4e 0%, #000 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* --- Sol Taraf: Soru Alanı --- */
+        .main-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .question-box {
+            width: 100%;
+            background: var(--blue-gradient);
+            border: var(--border-style);
+            border-radius: 50px;
+            padding: 30px;
+            text-align: center;
+            font-size: 22px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .answer-btn {
+            background: var(--blue-gradient);
+            border: var(--border-style);
+            border-radius: 30px;
+            padding: 15px 25px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .answer-btn:hover {
+            border-color: var(--gold);
+            background: rgba(240, 192, 64, 0.1);
+        }
+
+        .answer-btn span { color: var(--gold); font-weight: bold; margin-right: 10px; }
+
+        /* Durum Renkleri */
+        .selected { background: orange !important; color: black; }
+        .correct { background: green !important; border-color: #00ff00; }
+        .wrong { background: red !important; border-color: #ff0000; }
+
+        /* --- Sağ Taraf: Ödül Paneli --- */
+        .sidebar {
+            background: rgba(0,0,0,0.4);
+            border-left: 2px solid rgba(255,255,255,0.1);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .money-step {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .active-step { background: orange; color: black; font-weight: bold; }
+        .safe-step { color: white; }
+
+        /* Jokerler */
+        .joker-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .joker {
+            width: 50px;
+            height: 35px;
+            background: var(--blue-gradient);
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .joker.used { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+
+        /* Giriş ve Bitiş Ekranı */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .start-btn {
+            background: var(--gold);
+            border: none;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            #game-container { grid-template-columns: 1fr; }
+            .sidebar { order: -1; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="ekran" id="app"></div>
+    <div id="overlay">
+        <h1 style="margin-bottom: 20px; color: var(--gold);">MİLYONER'E HOŞ GELDİNİZ</h1>
+        <button class="start-btn" onclick="startGame()">OYUNU BAŞLAT</button>
+    </div>
 
-<script>
-const FIREBASE_URL = "https://kim-milyoner-olmak-default-rtdb.europe-west1.firebasedatabase.app";
+    <div id="game-container">
+        <div class="main-area">
+            <div class="joker-container">
+                <div class="joker" id="joker-50" onclick="use5050()">50:50</div>
+                <div class="joker" id="joker-audience" onclick="useAudience()">👥</div>
+                <div class="joker" id="joker-phone" onclick="usePhone()">📞</div>
+            </div>
 
-const SORULAR = [
-  { soru: "Türkiye'nin başkenti neresidir?", secenekler: ["İstanbul", "Ankara", "İzmir", "Bursa"], dogru: 1 },
-  { soru: "Dünya'nın en büyük okyanusu hangisidir?", secenekler: ["Atlantik", "Hint", "Arktik", "Pasifik"], dogru: 3 },
-  { soru: "Hangi element periyodik tabloda 'Au' sembolüyle gösterilir?", secenekler: ["Gümüş", "Altın", "Alüminyum", "Arsenik"], dogru: 1 },
-  { soru: "Mona Lisa tablosunu kim yapmıştır?", secenekler: ["Michelangelo", "Van Gogh", "Leonardo da Vinci", "Picasso"], dogru: 2 },
-  { soru: "İnsan vücudundaki kemik sayısı kaçtır?", secenekler: ["186", "206", "216", "226"], dogru: 1 },
-  { soru: "Hangi gezegen Güneş'e en yakındır?", secenekler: ["Venüs", "Mars", "Merkür", "Dünya"], dogru: 2 },
-  { soru: "Shakespeare'in 'Hamlet' eseri hangi ülkede geçer?", secenekler: ["İngiltere", "Danimarka", "İtalya", "Fransa"], dogru: 1 },
-  { soru: "Dünyanın en uzun nehri hangisidir?", secenekler: ["Amazon", "Nil", "Mississippi", "Yangtze"], dogru: 1 },
-  { soru: "Işığın vakumdaki hızı yaklaşık kaç km/s'dir?", secenekler: ["150.000", "200.000", "300.000", "400.000"], dogru: 2 },
-  { soru: "Osmanlı İmparatorluğu'nun kurucusu kimdir?", secenekler: ["Orhan Gazi", "Yıldırım Bayezid", "Osman Gazi", "Fatih Sultan Mehmet"], dogru: 2 },
-  { soru: "Pi sayısının ilk üç basamağı nedir?", secenekler: ["3.12", "3.14", "3.16", "3.18"], dogru: 1 },
-  { soru: "DNA'nın açılımı nedir?", secenekler: ["Deoksiribonükleik Asit", "Dinamik Nükleer Asit", "Direk Nükleotid Analizi", "Difüzyon Nükleik Aktivitesi"], dogru: 0 },
-  { soru: "Hangi ülke 2022 FIFA Dünya Kupası'nı kazandı?", secenekler: ["Fransa", "Brezilya", "Hırvatistan", "Arjantin"], dogru: 3 },
-  { soru: "Güneş sistemindeki en büyük gezegen hangisidir?", secenekler: ["Satürn", "Jüpiter", "Uranüs", "Neptün"], dogru: 1 },
-  { soru: "Türkiye Cumhuriyeti hangi yılda kuruldu?", secenekler: ["1920", "1921", "1923", "1922"], dogru: 2 },
-];
+            <div class="question-box" id="question-text">Soru buraya gelecek...</div>
 
-const ODULLER = ["1.000 TL","2.000 TL","3.000 TL","5.000 TL","10.000 TL","20.000 TL","40.000 TL","75.000 TL","150.000 TL","300.000 TL","500.000 TL","750.000 TL","1.000.000 TL"];
-const HARFLER = ["A","B","C","D"];
-const GUVENLI = [1, 6, 11]; // Soru indeksleri (2, 7 ve 12. sorular)
-
-let state = {
-  ekran: "giris",
-  rol: null,
-  odaId: null,
-  oyun: null,
-  isim: "",
-  kopyalandi: false,
-};
-let pollingInterval = null;
-const myId = Math.random().toString(36).substr(2, 9);
-let localSoruIndex = -1;
-let kalanSure = 60;
-let timerInterval = null;
-
-// Firebase Helpers
-async function fbSet(path, data) {
-  const r = await fetch(`${FIREBASE_URL}/${path}.json`, {
-    method: "PUT", body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" }
-  });
-  return r.json();
-}
-async function fbUpdate(path, data) {
-  const r = await fetch(`${FIREBASE_URL}/${path}.json`, {
-    method: "PATCH", body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" }
-  });
-  return r.json();
-}
-async function fbGet(path) {
-  const r = await fetch(`${FIREBASE_URL}/${path}.json`);
-  return r.json();
-}
-
-function generateOdaId() { return Math.random().toString(36).substr(2, 6).toUpperCase(); }
-
-function pollingBaslat(odaId) {
-  if (pollingInterval) clearInterval(pollingInterval);
-  pollingInterval = setInterval(async () => {
-    try {
-      const data = await fbGet(`odalar/${odaId}`);
-      if (!data) return;
-      state.oyun = data;
-      if (data.ekran !== state.ekran) {
-        state.ekran = data.ekran;
-        render();
-      } else {
-        renderOyunIci();
-      }
-    } catch(e) {}
-  }, 1000);
-}
-
-// Actions
-async function odaOlustur() {
-  const isim = document.getElementById("isim-input").value.trim() || "Sunucu";
-  state.isim = isim;
-  const odaId = generateOdaId();
-  state.odaId = odaId;
-  const durum = {
-    ekran: "bekle", soruIndex: 0, secilenSik: null, onaylandi: false, sonuc: null,
-    sunucu: { id: myId, isim }, yarismaci: null,
-    jokerler: { elleYarida: true, yuzdeElli: true, seyirciyeSor: true },
-    yuzdeElliGizli: [], seyirciData: null, kazanim: "0 TL"
-  };
-  await fbSet(`odalar/${odaId}`, durum);
-  state.rol = "sunucu";
-  state.ekran = "bekle";
-  pollingBaslat(odaId);
-  render();
-}
-
-async function odayaKatil() {
-  const isim = document.getElementById("isim-input").value.trim() || "Yarışmacı";
-  state.isim = isim;
-  const data = await fbGet(`odalar/${state.odaId}`);
-  if (!data) { alert("Oda bulunamadı!"); return; }
-  await fbUpdate(`odalar/${state.odaId}`, { yarismaci: { id: myId, isim } });
-  state.rol = "yarismaci";
-  state.ekran = "bekle";
-  pollingBaslat(state.odaId);
-  render();
-}
-
-async function oyunuBaslat() {
-  await fbUpdate(`odalar/${state.odaId}`, { ekran: "oyun", soruIndex: 0, secilenSik: null, onaylandi: false });
-}
-
-async function sikSec(idx) {
-  if (state.rol !== "yarismaci" || state.oyun.onaylandi || kalanSure <= 0) return;
-  if (state.oyun.yuzdeElliGizli && state.oyun.yuzdeElliGizli.includes(idx)) return;
-  await fbUpdate(`odalar/${state.odaId}`, { secilenSik: idx });
-}
-
-async function cevapOnayla() {
-  const d = state.oyun;
-  if (d.secilenSik === null) return;
-  await fbUpdate(`odalar/${state.odaId}`, { onaylandi: true });
-  const soru = SORULAR[d.soruIndex];
-  
-  setTimeout(async () => {
-    if (d.secilenSik === soru.dogru) {
-      if (d.soruIndex === SORULAR.length - 1) {
-        await fbUpdate(`odalar/${state.odaId}`, { ekran: "bitti", sonuc: "kazandi", kazanim: "1.000.000 TL" });
-      } else {
-        await fbUpdate(`odalar/${state.odaId}`, {
-          soruIndex: d.soruIndex + 1, secilenSik: null, onaylandi: false,
-          yuzdeElliGizli: [], seyirciData: null
-        });
-      }
-    } else {
-      const guvenliIdx = [...GUVENLI].reverse().find(g => g < d.soruIndex);
-      const kazanim = guvenliIdx !== undefined ? ODULLER[guvenliIdx] : "0 TL";
-      await fbUpdate(`odalar/${state.odaId}`, { ekran: "bitti", sonuc: "yanlis", kazanim });
-    }
-  }, 2000);
-}
-
-async function jokeriKullan(tip) {
-  const d = state.oyun;
-  if (!d.jokerler[tip]) return;
-  let guncelle = { [`jokerler/${tip}`]: false };
-  if (tip === "yuzdeElli") {
-    const soru = SORULAR[d.soruIndex];
-    const yanlis = [0,1,2,3].filter(i => i !== soru.dogru).sort(() => Math.random()-0.5).slice(0,2);
-    guncelle.yuzdeElliGizli = yanlis;
-  }
-  if (tip === "seyirciyeSor") {
-    const soru = SORULAR[d.soruIndex];
-    let oranlar = [0,0,0,0];
-    oranlar[soru.dogru] = Math.floor(Math.random()*30)+50;
-    let kalan = 100 - oranlar[soru.dogru];
-    [0,1,2,3].filter(i=>i!==soru.dogru).forEach((i,idx,arr)=>{
-      if(idx===arr.length-1) oranlar[i]=kalan;
-      else { const p=Math.floor(Math.random()*kalan*0.7); oranlar[i]=p; kalan-=p; }
-    });
-    guncelle.seyirciData = oranlar;
-  }
-  if (tip === "elleYarida") {
-    const kazanim = d.soruIndex > 0 ? ODULLER[d.soruIndex-1] : "0 TL";
-    await fbUpdate(`odalar/${state.odaId}`, { ekran: "bitti", sonuc: "elleyarida", kazanim });
-    return;
-  }
-  await fbUpdate(`odalar/${state.odaId}`, guncelle);
-}
-
-function render() {
-  const app = document.getElementById("app");
-  const { ekran } = state;
-
-  if (ekran === "giris") {
-    app.innerHTML = `
-      <div style="text-align:center">
-        <h1 class="baslik">Kim Milyoner<br>Olmak İster?</h1>
-        <input id="isim-input" placeholder="İsminizi girin...">
-        <button class="btn btn-altin" onclick="odaOlustur()">🎙️ Sunucu Ol</button>
-      </div>`;
-  } else if (ekran === "katil") {
-    app.innerHTML = `
-      <div style="text-align:center">
-        <h2 style="color:#f0c040">Odaya Katıl: ${state.odaId}</h2>
-        <input id="isim-input" placeholder="İsminizi girin...">
-        <button class="btn btn-yesil" onclick="odayaKatil()">✅ Katıl</button>
-      </div>`;
-  } else if (ekran === "bekle") {
-    const d = state.oyun;
-    app.innerHTML = `
-      <div style="text-align:center">
-        <h2 style="color:#f0c040">Bekleme Odası</h2>
-        <div class="info-box">
-          <div class="vs-kutu">
-            <div>${d.sunucu?.isim || '—'}<br><small>SUNUCU</small></div>
-            <div>VS</div>
-            <div>${d.yarismaci?.isim || 'Bekleniyor...'}<br><small>YARIŞMACI</small></div>
-          </div>
+            <div class="answers-grid">
+                <button class="answer-btn" onclick="checkAnswer(0)"><span>A:</span> <label id="ans0"></label></button>
+                <button class="answer-btn" onclick="checkAnswer(1)"><span>B:</span> <label id="ans1"></label></button>
+                <button class="answer-btn" onclick="checkAnswer(2)"><span>C:</span> <label id="ans2"></label></button>
+                <button class="answer-btn" onclick="checkAnswer(3)"><span>D:</span> <label id="ans3"></label></button>
+            </div>
         </div>
-        ${state.rol === "sunucu" && d.yarismaci ? `<button class="btn btn-altin" onclick="oyunuBaslat()">▶️ Başlat</button>` : `<p>Sunucu bekleniyor...</p>`}
-      </div>`;
-  } else if (ekran === "oyun") {
-    renderOyunIci();
-  } else if (ekran === "bitti") {
-    const d = state.oyun;
-    app.innerHTML = `
-      <div style="text-align:center">
-        <div class="sonuc-emoji">${d.sonuc === 'kazandi' ? '🏆' : '❌'}</div>
-        <div class="sonuc-baslik">${d.sonuc === 'kazandi' ? 'TEBRİKLER!' : 'OYUN BİTTİ'}</div>
-        <div class="sonuc-kazanim">${d.kazanim}</div>
-        <button class="btn btn-altin" onclick="location.reload()">🔄 Ana Sayfa</button>
-      </div>`;
-  }
-}
 
-function renderOyunIci() {
-  const app = document.getElementById("app");
-  const d = state.oyun;
-  if (!d || state.ekran !== "oyun") return;
-  const soru = SORULAR[d.soruIndex];
+        <div class="sidebar" id="money-list">
+            </div>
+    </div>
 
-  if (localSoruIndex !== d.soruIndex) {
-    localSoruIndex = d.soruIndex;
-    kalanSure = 60;
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-      if (!state.oyun.onaylandi && kalanSure > 0) {
-        kalanSure--;
-        const el = document.getElementById("sure-sayaci");
-        if (el) el.innerText = kalanSure;
-      }
-    }, 1000);
-  }
+    <script>
+        const questions = [
+            { q: "Gökyüzü neden mavi görünür?", a: ["Işığın yansıması", "Işığın kırılması", "Işığın saçılması", "Atmosferin rengi"], c: 2 },
+            { q: "Hangi gezegen halkalarıyla ünlüdür?", a: ["Mars", "Jüpiter", "Uranüs", "Satürn"], c: 3 },
+            { q: "Türkiye'nin en yüksek dağı hangisidir?", a: ["Erciyes", "Ağrı", "Kaçkar", "Uludağ"], c: 1 },
+            { q: "İstiklal Marşı hangi yıl kabul edilmiştir?", a: ["1920", "1921", "1923", "1924"], c: 1 },
+            { q: "Sinekli Bakkal romanının yazarı kimdir?", a: ["Reşat Nuri", "Halide Edip", "Yaşar Kemal", "Zülfü Livaneli"], c: 1 },
+            { q: "Bir gün kaç saniyedir?", a: ["86400", "84600", "86200", "90000"], c: 0 },
+            { q: "Hangisi bir programlama dili değildir?", a: ["Python", "Java", "HTML", "C++"], c: 2 }
+        ];
 
-  let siklarHtml = '<div class="siklar">';
-  soru.secenekler.forEach((s, i) => {
-    const gizli = d.yuzdeElliGizli && d.yuzdeElliGizli.includes(i);
-    let cls = "sik";
-    if (gizli) cls += " sik-gizli";
-    else if (d.onaylandi) {
-      if (i === soru.dogru) cls += " sik-dogru";
-      else if (i === d.secilenSik) cls += " sik-yanlis";
-    } else if (i === d.secilenSik) cls += " sik-secili";
+        const moneySteps = ["1.000.000 TL", "500.000 TL", "250.000 TL", "125.000 TL", "64.000 TL", "32.000 TL", "16.000 TL", "8.000 TL", "4.000 TL", "2.000 TL", "1.000 TL", "500 TL"];
+        
+        let currentLevel = 0;
+        let isAnswering = false;
 
-    siklarHtml += `<button class="${cls}" onclick="sikSec(${i})">
-      <span class="sik-harf">${HARFLER[i]}</span> ${s}
-    </button>`;
-  });
-  siklarHtml += '</div>';
+        function startGame() {
+            document.getElementById('overlay').style.display = 'none';
+            renderMoneySteps();
+            loadQuestion();
+        }
 
-  app.innerHTML = `
-    <div class="oyun-layout">
-      <div class="sol-panel">
-        <div class="sol-panel-baslik">ÖDÜLLER</div>
-        ${[...ODULLER].reverse().map((o, idx) => {
-          const i = ODULLER.length - 1 - idx;
-          let cls = "odul-satir";
-          if (i === d.soruIndex) cls += " odul-satir-aktif";
-          return `<div class="${cls}">${o}</div>`;
-        }).join('')}
-      </div>
-      <div class="sag-icerik">
-        <div style="text-align:center; font-size:20px; margin-bottom:10px;">⏳ <span id="sure-sayaci">${kalanSure}</span></div>
-        <div class="jokerler">
-          <button class="joker-btn ${d.jokerler.yuzdeElli?'':'joker-kullanildi'}" onclick="jokeriKullan('yuzdeElli')">50:50</button>
-          <button class="joker-btn ${d.jokerler.seyirciyeSor?'':'joker-kullanildi'}" onclick="jokeriKullan('seyirciyeSor')">👥 Seyirci</button>
-          <button class="joker-btn ${d.jokerler.elleYarida?'':'joker-kullanildi'}" onclick="jokeriKullan('elleYarida')">✋ Çekil</button>
-        </div>
-        <div class="kart"><p class="soru-text">${soru.soru}</p></div>
-        ${siklarHtml}
-        ${state.rol === "sunucu" && d.secilenSik !== null && !d.onaylandi ? 
-          `<button class="btn btn-altin pulse" onclick="cevapOnayla()">✅ SON KARARI ONAYLA</button>` : ''}
-      </div>
-    </div>`;
-}
+        function renderMoneySteps() {
+            const list = document.getElementById('money-list');
+            list.innerHTML = '';
+            moneySteps.forEach((m, i) => {
+                const stepIdx = moneySteps.length - 1 - i;
+                const div = document.createElement('div');
+                div.className = `money-step ${stepIdx === currentLevel ? 'active-step' : ''}`;
+                if(stepIdx === 1 || stepIdx === 6 || stepIdx === 11) div.classList.add('safe-step');
+                div.innerHTML = `<span>${stepIdx + 1}</span> <span>${m}</span>`;
+                list.appendChild(div);
+            });
+        }
 
-window.onload = () => {
-  const oda = new URLSearchParams(window.location.search).get("oda");
-  if (oda) { state.odaId = oda; state.ekran = "katil"; }
-  render();
-};
-</script>
+        function loadQuestion() {
+            isAnswering = false;
+            const qData = questions[currentLevel] || questions[questions.length - 1]; // Örnek biterse son soruyu döner
+            document.getElementById('question-text').innerText = qData.q;
+            
+            const btns = document.querySelectorAll('.answer-btn');
+            btns.forEach((btn, i) => {
+                btn.className = 'answer-btn';
+                btn.style.visibility = 'visible';
+                document.getElementById(`ans${i}`).innerText = qData.a[i];
+            });
+            renderMoneySteps();
+        }
+
+        function checkAnswer(idx) {
+            if(isAnswering) return;
+            isAnswering = true;
+
+            const correctIdx = questions[currentLevel].c;
+            const btns = document.querySelectorAll('.answer-btn');
+
+            btns[idx].classList.add('selected');
+
+            setTimeout(() => {
+                if(idx === correctIdx) {
+                    btns[idx].classList.replace('selected', 'correct');
+                    setTimeout(() => {
+                        currentLevel++;
+                        if(currentLevel >= questions.length) {
+                            alert("TEBRİKLER! MİLYONER OLDUNUZ!");
+                            location.reload();
+                        } else {
+                            loadQuestion();
+                        }
+                    }, 1500);
+                } else {
+                    btns[idx].classList.replace('selected', 'wrong');
+                    btns[correctIdx].classList.add('correct');
+                    setTimeout(() => {
+                        alert("Maalesef kaybettiniz. Ödülünüz: " + (currentLevel > 0 ? moneySteps[moneySteps.length - currentLevel] : "0 TL"));
+                        location.reload();
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        // Jokerler
+        function use5050() {
+            if(document.getElementById('joker-50').classList.contains('used') || isAnswering) return;
+            const correctIdx = questions[currentLevel].c;
+            let removed = 0;
+            const indices = [0,1,2,3].filter(i => i !== correctIdx).sort(() => Math.random() - 0.5);
+            
+            indices.slice(0, 2).forEach(idx => {
+                document.querySelectorAll('.answer-btn')[idx].style.visibility = 'hidden';
+            });
+            document.getElementById('joker-50').classList.add('used');
+        }
+
+        function useAudience() {
+            if(document.getElementById('joker-audience').classList.contains('used') || isAnswering) return;
+            const correctLetter = ["A", "B", "C", "D"][questions[currentLevel].c];
+            alert("Seyircilerin %72'si " + correctLetter + " şıkkını düşünüyor.");
+            document.getElementById('joker-audience').classList.add('used');
+        }
+
+        function usePhone() {
+            if(document.getElementById('joker-phone').classList.contains('used') || isAnswering) return;
+            alert("Arkadaşın: 'Emin değilim ama sanırım cevap " + ["A", "B", "C", "D"][questions[currentLevel].c] + ".'");
+            document.getElementById('joker-phone').classList.add('used');
+        }
+    </script>
 </body>
 </html>
