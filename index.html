@@ -1,233 +1,261 @@
-<!-- SADECE JS KISMI DEĞİŞTİ, HTML/CSS AYNI -->
-
 <script>
 const FIREBASE_URL = "https://kim-milyoner-olmak-default-rtdb.europe-west1.firebasedatabase.app";
 
 const SORULAR = [
-  { soru: "Türkiye'nin başkenti neresidir?", secenekler: ["İstanbul", "Ankara", "İzmir", "Bursa"], dogru: 1 },
-  { soru: "Dünya'nın en büyük okyanusu hangisidir?", secenekler: ["Atlantik", "Hint", "Arktik", "Pasifik"], dogru: 3 },
-  { soru: "Hangi element periyodik tabloda 'Au' sembolüyle gösterilir?", secenekler: ["Gümüş", "Altın", "Alüminyum", "Arsenik"], dogru: 1 },
-  { soru: "Mona Lisa tablosunu kim yapmıştır?", secenekler: ["Michelangelo", "Van Gogh", "Leonardo da Vinci", "Picasso"], dogru: 2 },
-  { soru: "İnsan vücudundaki kemik sayısı kaçtır?", secenekler: ["186", "206", "216", "226"], dogru: 1 },
+  { soru: "Türkiye'nin başkenti neresidir?", secenekler: ["İstanbul","Ankara","İzmir","Bursa"], dogru: 1 },
+  { soru: "Dünya'nın en büyük okyanusu hangisidir?", secenekler: ["Atlantik","Hint","Arktik","Pasifik"], dogru: 3 },
+  { soru: "Hangi element 'Au'?", secenekler: ["Gümüş","Altın","Alüminyum","Arsenik"], dogru: 1 }
 ];
 
-const ODULLER = ["1.000 TL","2.000 TL","3.000 TL","5.000 TL","10.000 TL"];
+const ODULLER = ["1.000 TL","2.000 TL","3.000 TL"];
 const HARFLER = ["A","B","C","D"];
-const GUVENLI = [2, 4];
+const GUVENLI = [1,2];
 
 let state = {
   ekran: "giris",
   rol: null,
   odaId: null,
   oyun: null,
-  isim: "",
+  isim: ""
 };
 
 let pollingInterval = null;
-const myId = Math.random().toString(36).substr(2, 9);
+const myId = Math.random().toString(36).substr(2,9);
 
-async function fbSet(path, data) {
-  return fetch(`${FIREBASE_URL}/${path}.json`, {
-    method: "PUT",
-    body: JSON.stringify(data)
+/* ================= FIREBASE ================= */
+
+async function fbSet(path,data){
+  return fetch(`${FIREBASE_URL}/${path}.json`,{
+    method:"PUT",
+    body:JSON.stringify(data)
   });
 }
 
-async function fbUpdate(path, data) {
-  return fetch(`${FIREBASE_URL}/${path}.json`, {
-    method: "PATCH",
-    body: JSON.stringify(data)
+async function fbUpdate(path,data){
+  return fetch(`${FIREBASE_URL}/${path}.json`,{
+    method:"PATCH",
+    body:JSON.stringify(data)
   });
 }
 
-async function fbGet(path) {
+async function fbGet(path){
   const r = await fetch(`${FIREBASE_URL}/${path}.json`);
   return r.json();
 }
 
-function generateOdaId() {
-  return Math.random().toString(36).substr(2, 6).toUpperCase();
-}
-
 /* ================= POLLING ================= */
 
-function pollingBaslat(odaId) {
+function pollingBaslat(id){
   clearInterval(pollingInterval);
 
-  pollingInterval = setInterval(async () => {
-    const data = await fbGet(`odalar/${odaId}`);
-    if (!data) return;
+  pollingInterval = setInterval(async ()=>{
+    const data = await fbGet(`odalar/${id}`);
+    if(!data) return;
 
     state.oyun = data;
 
     // ⏱️ süre kontrolü
-    if (data.ekran === "oyun" && data.sureBaslangic) {
-      const kalan = data.sureMs - (Date.now() - data.sureBaslangic);
+    if(data.ekran==="oyun" && data.sureBaslangic){
+      const kalan = data.sureMs - (Date.now()-data.sureBaslangic);
 
-      if (kalan <= 0 && !data.onaylandi) {
-        if (state.rol === "sunucu") {
-          await fbUpdate(`odalar/${odaId}`, {
-            ekran: "bitti",
-            sonuc: "yanlis",
-            kazanim: "0 TL"
+      if(kalan<=0 && !data.onaylandi){
+        if(state.rol==="sunucu"){
+          await fbUpdate(`odalar/${id}`,{
+            ekran:"bitti",
+            sonuc:"yanlis",
+            kazanim:"0 TL"
           });
         }
       }
     }
 
-    if (data.ekran !== state.ekran) {
-      state.ekran = data.ekran;
+    if(data.ekran!==state.ekran){
+      state.ekran=data.ekran;
       render();
-    } else {
-      render(); // 🔥 kritik fix
+    }else{
+      render(); // 🔥 kritik
     }
 
-  }, 1000);
+  },1000);
 }
 
 /* ================= AKSİYON ================= */
 
-async function odaOlustur() {
-  const isim = document.getElementById("isim-input").value || "Sunucu";
+function generateOdaId(){
+  return Math.random().toString(36).substr(2,6).toUpperCase();
+}
 
-  const odaId = generateOdaId();
+async function odaOlustur(){
+  const isim=document.getElementById("isim-input").value||"Sunucu";
 
-  const durum = {
-    ekran: "bekle",
-    soruIndex: 0,
-    secilenSik: null,
-    onaylandi: false,
-    sonuc: null,
+  const odaId=generateOdaId();
 
-    sunucu: { id: myId, isim },
-    yarismaci: null,
+  const durum={
+    ekran:"bekle",
+    soruIndex:0,
+    secilenSik:null,
+    onaylandi:false,
+    sonuc:null,
 
-    jokerler: { yuzdeElli: true },
+    sunucu:{id:myId,isim},
+    yarismaci:null,
 
-    yuzdeElliGizli: [],
+    jokerler:{yuzdeElli:true},
+    yuzdeElliGizli:[],
 
     // ⏱️ süre
-    sureMs: 30000,
-    sureBaslangic: null
+    sureMs:30000,
+    sureBaslangic:null
   };
 
-  await fbSet(`odalar/${odaId}`, durum);
+  await fbSet(`odalar/${odaId}`,durum);
 
-  state = { ...state, odaId, rol: "sunucu", oyun: durum, ekran: "bekle" };
+  state.odaId=odaId;
+  state.rol="sunucu";
+  state.oyun=durum;
+  state.ekran="bekle";
 
   pollingBaslat(odaId);
   render();
 }
 
-async function odayaKatil() {
-  const isim = document.getElementById("isim-input").value || "Yarışmacı";
+async function odayaKatil(){
+  const isim=document.getElementById("isim-input").value||"Yarışmacı";
 
-  const data = await fbGet(`odalar/${state.odaId}`);
-  if (!data) return alert("Oda yok");
+  const data=await fbGet(`odalar/${state.odaId}`);
+  if(!data) return alert("Oda yok");
 
-  await fbUpdate(`odalar/${state.odaId}`, {
-    yarismaci: { id: myId, isim }
+  await fbUpdate(`odalar/${state.odaId}`,{
+    yarismaci:{id:myId,isim}
   });
 
-  state.rol = "yarismaci";
-  state.ekran = "bekle";
+  state.rol="yarismaci";
+  state.ekran="bekle";
 
   pollingBaslat(state.odaId);
 }
 
-/* ================= OYUN ================= */
-
-async function oyunuBaslat() {
-  await fbUpdate(`odalar/${state.odaId}`, {
-    ekran: "oyun",
-    sureBaslangic: Date.now()
+async function oyunuBaslat(){
+  await fbUpdate(`odalar/${state.odaId}`,{
+    ekran:"oyun",
+    sureBaslangic:Date.now()
   });
 }
 
-async function sikSec(i) {
-  await fbUpdate(`odalar/${state.odaId}`, {
-    secilenSik: i
+async function sikSec(i){
+  const d=state.oyun;
+  if(!d || d.onaylandi) return;
+
+  await fbUpdate(`odalar/${state.odaId}`,{
+    secilenSik:i
   });
 }
 
-async function cevapOnayla() {
-  const d = state.oyun;
+async function cevapOnayla(){
+  const d=state.oyun;
+  if(d.secilenSik==null) return;
 
-  await fbUpdate(`odalar/${state.odaId}`, {
-    onaylandi: true
+  await fbUpdate(`odalar/${state.odaId}`,{
+    onaylandi:true
   });
 
-  setTimeout(async () => {
+  setTimeout(async ()=>{
 
-    if (d.secilenSik === SORULAR[d.soruIndex].dogru) {
+    if(d.secilenSik===SORULAR[d.soruIndex].dogru){
 
-      await fbUpdate(`odalar/${state.odaId}`, {
-        soruIndex: d.soruIndex + 1,
-        secilenSik: null,
-        onaylandi: false,
-        sureBaslangic: Date.now(), // ⏱️ reset
-        yuzdeElliGizli: []
-      });
+      if(d.soruIndex===SORULAR.length-1){
+        await fbUpdate(`odalar/${state.odaId}`,{
+          ekran:"bitti",
+          sonuc:"kazandi"
+        });
+      }else{
+        await fbUpdate(`odalar/${state.odaId}`,{
+          soruIndex:d.soruIndex+1,
+          secilenSik:null,
+          onaylandi:false,
+          yuzdeElliGizli:[],
+          sureBaslangic:Date.now()
+        });
+      }
 
-    } else {
-      await fbUpdate(`odalar/${state.odaId}`, {
-        ekran: "bitti",
-        sonuc: "yanlis"
+    }else{
+      await fbUpdate(`odalar/${state.odaId}`,{
+        ekran:"bitti",
+        sonuc:"yanlis"
       });
     }
 
-  }, 1500);
+  },1500);
+}
+
+async function jokeriKullan(){
+  const d=state.oyun;
+  if(!d.jokerler.yuzdeElli) return;
+
+  const yanlis=[0,1,2,3]
+    .filter(i=>i!==SORULAR[d.soruIndex].dogru)
+    .sort(()=>Math.random()-0.5)
+    .slice(0,2);
+
+  await fbUpdate(`odalar/${state.odaId}`,{
+    jokerler:{yuzdeElli:false},
+    yuzdeElliGizli:yanlis
+  });
 }
 
 /* ================= RENDER ================= */
 
-function render() {
-  const app = document.getElementById("app");
+function render(){
+  const app=document.getElementById("app");
 
-  if (state.ekran === "giris") {
-    app.innerHTML = `
+  if(state.ekran==="giris"){
+    app.innerHTML=`
       <input id="isim-input" placeholder="İsim">
       <button onclick="odaOlustur()">Oda Aç</button>
     `;
   }
 
-  if (state.ekran === "bekle") {
-    app.innerHTML = `
+  if(state.ekran==="bekle"){
+    app.innerHTML=`
       <h2>ODA: ${state.odaId}</h2>
       <button onclick="oyunuBaslat()">Başlat</button>
     `;
   }
 
-  if (state.ekran === "oyun") {
-    const d = state.oyun;
+  if(state.ekran==="oyun"){
+    const d=state.oyun;
 
-    let kalan = 0;
-    if (d.sureBaslangic) {
-      kalan = Math.max(0, d.sureMs - (Date.now() - d.sureBaslangic));
+    let kalan=0;
+    if(d.sureBaslangic){
+      kalan=Math.max(0,d.sureMs-(Date.now()-d.sureBaslangic));
     }
 
-    const saniye = Math.ceil(kalan / 1000);
+    const saniye=Math.ceil(kalan/1000);
 
-    app.innerHTML = `
+    app.innerHTML=`
       <h2>${SORULAR[d.soruIndex].soru}</h2>
 
-      <div>⏱️ ${saniye}</div>
+      <div>⏱️ ${saniye}s</div>
 
-      ${SORULAR[d.soruIndex].secenekler.map((s, i) =>
-        `<button onclick="sikSec(${i})">${s}</button>`
-      ).join("")}
+      ${SORULAR[d.soruIndex].secenekler.map((s,i)=>{
+        if(d.yuzdeElliGizli.includes(i)) return "";
+        return `<button onclick="sikSec(${i})">${HARFLER[i]} - ${s}</button>`;
+      }).join("")}
 
-      ${state.rol === "sunucu" && d.secilenSik != null && !d.onaylandi
+      ${state.rol==="sunucu" && d.secilenSik!=null && !d.onaylandi
         ? `<button onclick="cevapOnayla()">ONAYLA</button>`
-        : ""
-      }
+        : ""}
+
+      ${state.rol==="sunucu" && d.jokerler.yuzdeElli
+        ? `<button onclick="jokeriKullan()">50:50</button>`
+        : ""}
     `;
   }
 
-  if (state.ekran === "bitti") {
-    app.innerHTML = `<h1>Oyun Bitti</h1>`;
+  if(state.ekran==="bitti"){
+    app.innerHTML=`<h1>Oyun Bitti</h1>`;
   }
 }
 
-window.onload = () => render();
+window.onload=()=>render();
 </script>
