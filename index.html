@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kim Milyoner Olmak İster? - Sunucu Kontrollü</title>
+    <title>Kim Milyoner Olmak İster? - Sunucu & Yarışmacı</title>
     <style>
         :root {
             --dark-blue: #020230;
@@ -24,7 +24,7 @@
         }
 
         #game-container {
-            width: 100%; max-width: 1000px;
+            width: 100%; max-width: 1100px;
             display: grid; grid-template-columns: 3fr 1fr;
             gap: 20px; padding: 20px; display: none;
         }
@@ -34,37 +34,37 @@
         .question-box {
             width: 100%; background: var(--blue-gradient); border: var(--border-style);
             border-radius: 50px; padding: 30px; text-align: center;
-            font-size: 22px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            font-size: 24px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
 
         .answer-btn {
             background: var(--blue-gradient); border: var(--border-style);
-            border-radius: 30px; padding: 15px 25px; color: white;
+            border-radius: 30px; padding: 18px 25px; color: white;
             font-size: 18px; cursor: pointer; text-align: left; transition: all 0.3s;
         }
 
         .answer-btn span { color: var(--gold); font-weight: bold; margin-right: 10px; }
-        .selected { background: orange !important; color: black; }
-        .correct { background: green !important; border-color: #00ff00; }
-        .wrong { background: red !important; border-color: #ff0000; }
+        .selected { background: orange !important; color: black; border-color: white; }
+        .correct { background: green !important; border-color: #00ff00; color: white; }
+        .wrong { background: red !important; border-color: #ff0000; color: white; }
 
         .sidebar {
-            background: rgba(0,0,0,0.4); border-left: 2px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.6); border-left: 2px solid rgba(255,255,255,0.1);
             padding: 15px; display: flex; flex-direction: column; gap: 5px;
         }
 
         .money-step { display: flex; justify-content: space-between; padding: 5px 10px; border-radius: 5px; font-size: 14px; color: #aaa; }
         .active-step { background: orange; color: black; font-weight: bold; }
 
-        .joker-container { display: flex; gap: 15px; margin-bottom: 20px; }
+        .joker-container { display: flex; gap: 20px; margin-bottom: 10px; }
         .joker {
-            width: 60px; height: 40px; background: var(--blue-gradient); border: 1px solid var(--gold);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s;
+            width: 70px; height: 45px; background: var(--blue-gradient); border: 2px solid var(--gold);
+            border-radius: 50px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.3s;
         }
-        .joker.used { opacity: 0.2; pointer-events: none; }
+        .joker.used { opacity: 0.2; pointer-events: none; border-color: gray; }
         .joker.waiting { background: orange; color: black; animation: pulse 1s infinite; }
 
         #overlay {
@@ -72,26 +72,27 @@
             background: rgba(0,0,0,0.95); display: flex; justify-content: center; align-items: center; z-index: 100;
         }
 
-        .entry-card { background: var(--blue-gradient); border: var(--border-style); padding: 40px; border-radius: 20px; text-align: center; }
-        .start-btn { background: var(--gold); border: none; padding: 15px 30px; margin: 10px; font-size: 18px; font-weight: bold; cursor: pointer; border-radius: 50px; width: 280px; }
+        .entry-card { background: var(--blue-gradient); border: var(--border-style); padding: 50px; border-radius: 30px; text-align: center; }
+        .start-btn { background: var(--gold); border: none; padding: 20px 40px; margin: 10px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 50px; width: 320px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
         #host-panel {
-            width: 100%; padding: 20px; background: rgba(240, 192, 64, 0.2); border: 2px dashed var(--gold);
-            border-radius: 15px; text-align: center; display: none;
+            width: 100%; padding: 25px; background: rgba(255, 165, 0, 0.15); border: 3px solid orange;
+            border-radius: 20px; text-align: center; display: none; margin-top: 20px;
         }
 
-        .confirm-btn { background: var(--gold); color: black; border: none; padding: 15px 40px; font-weight: bold; border-radius: 50px; cursor: pointer; font-size: 20px; }
+        .confirm-btn { background: orange; color: black; border: none; padding: 15px 50px; font-weight: 800; border-radius: 50px; cursor: pointer; font-size: 22px; text-transform: uppercase; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
     <div id="overlay">
         <div class="entry-card">
-            <h1 style="color: var(--gold); margin-bottom: 20px;">MİLYONER GİRİŞİ</h1>
-            <button class="start-btn" onclick="initRole('sunucu')">🎤 SUNUCU OLARAK GİRİŞ</button>
-            <button class="start-btn" style="background: white;" onclick="initRole('yarismaci')">🙋‍♂️ YARIŞMACI OLARAK GİRİŞ</button>
+            <h1 style="color: var(--gold); margin-bottom: 30px; font-size: 32px;">MİLYONER OYUN MODU</h1>
+            <button class="start-btn" onclick="initRole('sunucu')">🎤 SUNUCU GİRİŞİ</button>
+            <br>
+            <button class="start-btn" style="background: white;" onclick="initRole('yarismaci')">🙋‍♂️ YARIŞMACI GİRİŞİ</button>
         </div>
     </div>
 
@@ -103,7 +104,7 @@
                 <div class="joker" id="jpho" onclick="requestJoker('Telefon')">📞</div>
             </div>
 
-            <div class="question-box" id="question-text">Soru bekleniyor...</div>
+            <div class="question-box" id="question-text">Yükleniyor...</div>
 
             <div class="answers-grid">
                 <button class="answer-btn" id="btn0" onclick="playerAction(0)"><span>A:</span> <label id="ans0"></label></button>
@@ -113,8 +114,8 @@
             </div>
 
             <div id="host-panel">
-                <p id="host-msg" style="margin-bottom: 10px; color: var(--gold);"></p>
-                <button class="confirm-btn" id="confirm-btn" onclick="hostConfirm()">ONAYLA</button>
+                <p id="host-msg" style="margin-bottom: 15px; font-size: 20px; color: orange; font-weight: bold;"></p>
+                <button class="confirm-btn" onclick="hostConfirm()">✅ ONAYLA (KARAR VERİLDİ)</button>
             </div>
         </div>
 
@@ -125,38 +126,51 @@
         const questions = [
             { q: "Gökyüzü neden mavi görünür?", a: ["Yansıma", "Kırılma", "Saçılma", "Atmosfer"], c: 2 },
             { q: "Hangi gezegen halkalarıyla ünlüdür?", a: ["Mars", "Jüpiter", "Uranüs", "Satürn"], c: 3 },
-            { q: "Türkiye'nin en yüksek dağı hangisidir?", a: ["Erciyes", "Ağrı", "Kaçkar", "Uludağ"], c: 1 }
+            { q: "Türkiye'nin en yüksek dağı hangisidir?", a: ["Erciyes", "Ağrı", "Kaçkar", "Uludağ"], c: 1 },
+            { q: "Bir gün kaç saniyedir?", a: ["86400", "84600", "86200", "90000"], c: 0 }
         ];
 
         const moneySteps = ["1.000.000 TL", "500.000 TL", "250.000 TL", "125.000 TL", "64.000 TL", "32.000 TL", "16.000 TL", "8.000 TL", "4.000 TL", "2.000 TL", "1.000 TL", "500 TL"];
         
         let role = "";
-        let currentLevel = 0;
 
-        window.addEventListener('storage', () => syncState());
+        // Veriyi çek ve güncelle
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'm_state') syncState();
+        });
 
         function initRole(r) {
             role = r;
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('game-container').style.display = 'grid';
-            if (role === 'sunucu') document.title = "SUNUCU PANELİ";
+            if (role === 'sunucu') {
+                document.title = "--- SUNUCU KONTROLÜ ---";
+                alert("SUNUCU: Yarışmacı seçim yapınca butonun gelecek.");
+            }
             syncState();
         }
 
         function save(data) {
-            const old = JSON.parse(localStorage.getItem('m_state')) || { level:0, sel:null, conf:false, jReq:null, jUsed:[] };
-            localStorage.setItem('m_state', JSON.stringify({ ...old, ...data }));
-            syncState();
+            const current = JSON.parse(localStorage.getItem('m_state')) || { level:0, sel:null, conf:false, jReq:null, jUsed:[] };
+            const updated = { ...current, ...data };
+            localStorage.setItem('m_state', JSON.stringify(updated));
+            syncState(); // Kendi ekranını hemen güncelle
         }
 
         function syncState() {
             const s = JSON.parse(localStorage.getItem('m_state')) || { level:0, sel:null, conf:false, jReq:null, jUsed:[] };
             const q = questions[s.level];
-            if(!q) return;
+            
+            if(!q) {
+                alert("YARIŞMA TAMAMLANDI!");
+                localStorage.clear();
+                location.reload();
+                return;
+            }
 
             document.getElementById('question-text').innerText = q.q;
             
-            // Şıklar ve Görünürlük
+            // Şıklar
             for(let i=0; i<4; i++) {
                 const btn = document.getElementById(`btn${i}`);
                 document.getElementById(`ans${i}`).innerText = q.a[i];
@@ -170,33 +184,41 @@
                 }
             }
 
-            // Joker Durumları
+            // Joker Görselleri
             ['50:50', 'Seyirci', 'Telefon'].forEach((type, idx) => {
-                const jEle = document.querySelectorAll('.joker')[idx];
+                const jEle = document.getElementsByClassName('joker')[idx];
                 jEle.className = 'joker' + (s.jUsed.includes(type) ? ' used' : (s.jReq === type ? ' waiting' : ''));
             });
 
-            // Sunucu Paneli Kontrolü
+            // SUNUCU PANELİ MANTIĞI
             const panel = document.getElementById('host-panel');
             const msg = document.getElementById('host-msg');
+            
             if (role === 'sunucu') {
                 if (s.jReq) {
                     panel.style.display = 'block';
-                    msg.innerText = `YARIŞMACI ${s.jReq} JOKERİ İSTİYOR!`;
+                    msg.innerText = `❓ JOKER TALEBİ: ${s.jReq}`;
                 } else if (s.sel !== null && !s.conf) {
                     panel.style.display = 'block';
-                    msg.innerText = `${["A","B","C","D"][s.sel]} ŞIKKI SEÇİLDİ. SON KARAR MI?`;
+                    msg.innerText = `💡 SEÇİLEN ŞIK: ${["A","B","C","D"][s.sel]} - SON KARAR MI?`;
                 } else {
                     panel.style.display = 'none';
                 }
+            } else {
+                panel.style.display = 'none'; // Yarışmacı paneli asla görmez
             }
             
-            // Otomatik İlerleme
+            // Doğru cevap sonrası ilerleme (Sadece Sunucu)
             if (s.conf && role === 'sunucu') {
                 setTimeout(() => {
-                    if (s.sel === q.c) save({ level: s.level + 1, sel: null, conf: false });
-                    else { alert("Yarışma Bitti"); localStorage.clear(); location.reload(); }
-                }, 3000);
+                    if (s.sel === q.c) {
+                        save({ level: s.level + 1, sel: null, conf: false });
+                    } else {
+                        alert("OYUN BİTTİ!");
+                        localStorage.clear();
+                        location.reload();
+                    }
+                }, 4000);
             }
 
             renderMoney(s.level);
@@ -204,25 +226,27 @@
 
         function playerAction(idx) {
             if (role !== 'yarismaci') return;
-            const s = JSON.parse(localStorage.getItem('m_state'));
-            if (s && !s.conf) save({ sel: idx });
+            const s = JSON.parse(localStorage.getItem('m_state')) || {};
+            if (s.conf) return; // Onaylanmış soruya tekrar basamasın
+            save({ sel: idx });
         }
 
         function requestJoker(type) {
             if (role !== 'yarismaci') return;
             const s = JSON.parse(localStorage.getItem('m_state')) || {};
-            if (!s.jUsed?.includes(type)) save({ jReq: type });
+            if (s.jUsed.includes(type) || s.jReq) return;
+            save({ jReq: type });
         }
 
         function hostConfirm() {
             if (role !== 'sunucu') return;
             const s = JSON.parse(localStorage.getItem('m_state'));
+            
             if (s.jReq) {
                 const used = s.jUsed || [];
                 used.push(s.jReq);
-                if(s.jReq !== '50:50') alert(`${s.jReq} jokeri için bilgi verin.`);
                 save({ jReq: null, jUsed: used });
-            } else {
+            } else if (s.sel !== null) {
                 save({ conf: true });
             }
         }
