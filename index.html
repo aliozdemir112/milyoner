@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kim Milyoner Olmak İster? - Sunucu & Yarışmacı</title>
+    <title>Kim Milyoner Olmak İster? - V3 (Kesin Çalışan)</title>
     <style>
         :root {
             --dark-blue: #020230;
@@ -16,106 +16,97 @@
 
         body {
             background: radial-gradient(circle, #0a0a4e 0%, #000 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             color: white;
-            display: flex;
-            justify-content: center; align-items: center;
+            display: flex; justify-content: center; align-items: center;
             min-height: 100vh; overflow: hidden;
         }
 
         #game-container {
-            width: 100%; max-width: 1100px;
-            display: grid; grid-template-columns: 3fr 1fr;
-            gap: 20px; padding: 20px; display: none;
+            width: 100%; max-width: 1000px;
+            display: none; grid-template-columns: 3fr 1fr; gap: 20px; padding: 20px;
         }
 
-        .main-area { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 30px; }
+        .main-area { display: flex; flex-direction: column; align-items: center; gap: 30px; }
 
         .question-box {
             width: 100%; background: var(--blue-gradient); border: var(--border-style);
-            border-radius: 50px; padding: 30px; text-align: center;
-            font-size: 24px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 50px; padding: 30px; text-align: center; font-size: 22px;
         }
 
         .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
 
         .answer-btn {
             background: var(--blue-gradient); border: var(--border-style);
-            border-radius: 30px; padding: 18px 25px; color: white;
-            font-size: 18px; cursor: pointer; text-align: left; transition: all 0.3s;
+            border-radius: 30px; padding: 18px; color: white;
+            font-size: 18px; cursor: pointer; text-align: left;
         }
 
-        .answer-btn span { color: var(--gold); font-weight: bold; margin-right: 10px; }
-        .selected { background: orange !important; color: black; border-color: white; }
-        .correct { background: green !important; border-color: #00ff00; color: white; }
-        .wrong { background: red !important; border-color: #ff0000; color: white; }
+        .answer-btn:hover { border-color: var(--gold); }
+        .selected { background: #ff9900 !important; color: black; font-weight: bold; }
+        .correct { background: #00aa00 !important; border-color: #00ff00; }
+        .wrong { background: #aa0000 !important; border-color: #ff0000; }
 
-        .sidebar {
-            background: rgba(0,0,0,0.6); border-left: 2px solid rgba(255,255,255,0.1);
-            padding: 15px; display: flex; flex-direction: column; gap: 5px;
-        }
+        .sidebar { background: rgba(0,0,0,0.5); padding: 15px; display: flex; flex-direction: column; gap: 5px; }
+        .money-step { display: flex; justify-content: space-between; padding: 4px 8px; font-size: 14px; color: #888; }
+        .active-step { background: orange; color: black; border-radius: 4px; font-weight: bold; }
 
-        .money-step { display: flex; justify-content: space-between; padding: 5px 10px; border-radius: 5px; font-size: 14px; color: #aaa; }
-        .active-step { background: orange; color: black; font-weight: bold; }
-
-        .joker-container { display: flex; gap: 20px; margin-bottom: 10px; }
+        .joker-container { display: flex; gap: 15px; margin-bottom: 10px; }
         .joker {
-            width: 70px; height: 45px; background: var(--blue-gradient); border: 2px solid var(--gold);
-            border-radius: 50px; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.3s;
+            width: 60px; height: 40px; background: var(--blue-gradient); border: 1px solid var(--gold);
+            border-radius: 20px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; font-size: 12px; font-weight: bold;
         }
-        .joker.used { opacity: 0.2; pointer-events: none; border-color: gray; }
-        .joker.waiting { background: orange; color: black; animation: pulse 1s infinite; }
+        .joker.used { opacity: 0.2; pointer-events: none; }
+        .joker.waiting { background: orange; color: black; animation: blink 1s infinite; }
+
+        #host-panel {
+            width: 100%; padding: 20px; background: rgba(255,165,0,0.2);
+            border: 2px solid orange; border-radius: 20px; text-align: center; display: none;
+        }
+
+        .confirm-btn {
+            background: orange; color: black; border: none; padding: 12px 30px;
+            font-weight: bold; border-radius: 30px; cursor: pointer; font-size: 18px;
+        }
 
         #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: flex; justify-content: center; align-items: center; z-index: 100;
+            background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 999;
         }
 
-        .entry-card { background: var(--blue-gradient); border: var(--border-style); padding: 50px; border-radius: 30px; text-align: center; }
-        .start-btn { background: var(--gold); border: none; padding: 20px 40px; margin: 10px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 50px; width: 320px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-
-        #host-panel {
-            width: 100%; padding: 25px; background: rgba(255, 165, 0, 0.15); border: 3px solid orange;
-            border-radius: 20px; text-align: center; display: none; margin-top: 20px;
-        }
-
-        .confirm-btn { background: orange; color: black; border: none; padding: 15px 50px; font-weight: 800; border-radius: 50px; cursor: pointer; font-size: 22px; text-transform: uppercase; }
-
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes blink { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <div class="entry-card">
-            <h1 style="color: var(--gold); margin-bottom: 30px; font-size: 32px;">MİLYONER OYUN MODU</h1>
-            <button class="start-btn" onclick="initRole('sunucu')">🎤 SUNUCU GİRİŞİ</button>
-            <br>
-            <button class="start-btn" style="background: white;" onclick="initRole('yarismaci')">🙋‍♂️ YARIŞMACI GİRİŞİ</button>
-        </div>
+        <h1 style="color:var(--gold); margin-bottom: 30px;">MİLYONER MODU</h1>
+        <button style="background:orange; border:none; padding:15px 40px; border-radius:30px; cursor:pointer; font-weight:bold; margin:10px; width:250px;" onclick="start('sunucu')">SUNUCU PANELİ</button>
+        <button style="background:white; border:none; padding:15px 40px; border-radius:30px; cursor:pointer; font-weight:bold; margin:10px; width:250px;" onclick="start('yarismaci')">YARIŞMACI PANELİ</button>
     </div>
 
     <div id="game-container">
         <div class="main-area">
             <div class="joker-container">
-                <div class="joker" id="j50" onclick="requestJoker('50:50')">50:50</div>
-                <div class="joker" id="jaud" onclick="requestJoker('Seyirci')">👥</div>
-                <div class="joker" id="jpho" onclick="requestJoker('Telefon')">📞</div>
+                <div class="joker" id="j0" onclick="jReq('50:50')">50:50</div>
+                <div class="joker" id="j1" onclick="jReq('Seyirci')">👥</div>
+                <div class="joker" id="j2" onclick="jReq('Telefon')">📞</div>
             </div>
 
-            <div class="question-box" id="question-text">Yükleniyor...</div>
+            <div class="question-box" id="q-text">Soru Yükleniyor...</div>
 
             <div class="answers-grid">
-                <button class="answer-btn" id="btn0" onclick="playerAction(0)"><span>A:</span> <label id="ans0"></label></button>
-                <button class="answer-btn" id="btn1" onclick="playerAction(1)"><span>B:</span> <label id="ans1"></label></button>
-                <button class="answer-btn" id="btn2" onclick="playerAction(2)"><span>C:</span> <label id="ans2"></label></button>
-                <button class="answer-btn" id="btn3" onclick="playerAction(3)"><span>D:</span> <label id="ans3"></label></button>
+                <button class="answer-btn" id="b0" onclick="pClick(0)">A: <span id="t0"></span></button>
+                <button class="answer-btn" id="b1" onclick="pClick(1)">B: <span id="t1"></span></button>
+                <button class="answer-btn" id="b2" onclick="pClick(2)">C: <span id="t2"></span></button>
+                <button class="answer-btn" id="b3" onclick="pClick(3)">D: <span id="t3"></span></button>
             </div>
 
             <div id="host-panel">
-                <p id="host-msg" style="margin-bottom: 15px; font-size: 20px; color: orange; font-weight: bold;"></p>
-                <button class="confirm-btn" onclick="hostConfirm()">✅ ONAYLA (KARAR VERİLDİ)</button>
+                <h3 id="h-msg" style="margin-bottom:10px;"></h3>
+                <button class="confirm-btn" onclick="hConfirm()">✅ ONAYLA</button>
             </div>
         </div>
 
@@ -123,143 +114,124 @@
     </div>
 
     <script>
-        const questions = [
-            { q: "Gökyüzü neden mavi görünür?", a: ["Yansıma", "Kırılma", "Saçılma", "Atmosfer"], c: 2 },
-            { q: "Hangi gezegen halkalarıyla ünlüdür?", a: ["Mars", "Jüpiter", "Uranüs", "Satürn"], c: 3 },
-            { q: "Türkiye'nin en yüksek dağı hangisidir?", a: ["Erciyes", "Ağrı", "Kaçkar", "Uludağ"], c: 1 },
-            { q: "Bir gün kaç saniyedir?", a: ["86400", "84600", "86200", "90000"], c: 0 }
+        const sorular = [
+            { s: "Gökyüzü neden mavi görünür?", c: ["Saçılma", "Yansıma", "Kırılma", "Soğurulma"], d: 0 },
+            { s: "Hangi gezegen 'Kızıl Gezegen' olarak bilinir?", c: ["Mars", "Venüs", "Jüpiter", "Satürn"], d: 0 },
+            { s: "Türkiye'nin en yüksek dağı hangisidir?", c: ["Erciyes", "Ağrı", "Süphan", "Kaçkar"], d: 1 }
         ];
+        const paralar = ["1.000.000", "500.000", "250.000", "125.000", "64.000", "32.000", "16.000", "8.000", "4.000", "2.000", "1.000", "500"];
 
-        const moneySteps = ["1.000.000 TL", "500.000 TL", "250.000 TL", "125.000 TL", "64.000 TL", "32.000 TL", "16.000 TL", "8.000 TL", "4.000 TL", "2.000 TL", "1.000 TL", "500 TL"];
-        
         let role = "";
 
-        // Veriyi çek ve güncelle
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'm_state') syncState();
-        });
-
-        function initRole(r) {
+        function start(r) {
             role = r;
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('game-container').style.display = 'grid';
-            if (role === 'sunucu') {
-                document.title = "--- SUNUCU KONTROLÜ ---";
-                alert("SUNUCU: Yarışmacı seçim yapınca butonun gelecek.");
+            // İlk durumu oluştur (yoksa)
+            if(!localStorage.getItem('game')) {
+                localStorage.setItem('game', JSON.stringify({lvl:0, sel:null, ok:false, req:null, used:[]}));
             }
-            syncState();
+            setInterval(sync, 500); // 500ms'de bir zorunlu kontrol
+            sync();
         }
 
-        function save(data) {
-            const current = JSON.parse(localStorage.getItem('m_state')) || { level:0, sel:null, conf:false, jReq:null, jUsed:[] };
-            const updated = { ...current, ...data };
-            localStorage.setItem('m_state', JSON.stringify(updated));
-            syncState(); // Kendi ekranını hemen güncelle
+        function pClick(i) {
+            if(role !== 'yarismaci') return;
+            let data = JSON.parse(localStorage.getItem('game'));
+            if(data.ok) return;
+            data.sel = i;
+            localStorage.setItem('game', JSON.stringify(data));
+            sync();
         }
 
-        function syncState() {
-            const s = JSON.parse(localStorage.getItem('m_state')) || { level:0, sel:null, conf:false, jReq:null, jUsed:[] };
-            const q = questions[s.level];
-            
-            if(!q) {
-                alert("YARIŞMA TAMAMLANDI!");
-                localStorage.clear();
-                location.reload();
-                return;
-            }
+        function jReq(type) {
+            if(role !== 'yarismaci') return;
+            let data = JSON.parse(localStorage.getItem('game'));
+            if(data.used.includes(type)) return;
+            data.req = type;
+            localStorage.setItem('game', JSON.stringify(data));
+            sync();
+        }
 
-            document.getElementById('question-text').innerText = q.q;
+        function hConfirm() {
+            if(role !== 'sunucu') return;
+            let data = JSON.parse(localStorage.getItem('game'));
+            if(data.req) {
+                data.used.push(data.req);
+                data.req = null;
+            } else {
+                data.ok = true;
+            }
+            localStorage.setItem('game', JSON.stringify(data));
+            sync();
+        }
+
+        function sync() {
+            const data = JSON.parse(localStorage.getItem('game'));
+            const q = sorular[data.lvl];
+            if(!q) return;
+
+            document.getElementById('q-text').innerText = q.s;
             
-            // Şıklar
             for(let i=0; i<4; i++) {
-                const btn = document.getElementById(`btn${i}`);
-                document.getElementById(`ans${i}`).innerText = q.a[i];
+                const btn = document.getElementById('b' + i);
+                document.getElementById('t' + i).innerText = q.c[i];
                 btn.className = 'answer-btn';
-                btn.style.visibility = (s.jUsed.includes('50:50') && i !== q.c && i !== (q.c + 1) % 4) ? 'hidden' : 'visible';
                 
-                if (s.sel === i) btn.classList.add('selected');
-                if (s.conf) {
-                    if (i === q.c) btn.classList.add('correct');
-                    else if (s.sel === i) btn.classList.add('wrong');
+                // 50:50 kontrolü
+                btn.style.visibility = (data.used.includes('50:50') && i !== q.d && i !== (q.d+1)%4) ? 'hidden' : 'visible';
+
+                if(data.sel === i) btn.classList.add('selected');
+                if(data.ok) {
+                    if(i === q.d) btn.classList.add('correct');
+                    else if(data.sel === i) btn.classList.add('wrong');
                 }
             }
 
-            // Joker Görselleri
-            ['50:50', 'Seyirci', 'Telefon'].forEach((type, idx) => {
-                const jEle = document.getElementsByClassName('joker')[idx];
-                jEle.className = 'joker' + (s.jUsed.includes(type) ? ' used' : (s.jReq === type ? ' waiting' : ''));
+            // Joker Görünümü
+            const jokers = ['50:50', 'Seyirci', 'Telefon'];
+            jokers.forEach((j, i) => {
+                const el = document.getElementById('j' + i);
+                el.className = 'joker' + (data.used.includes(j) ? ' used' : (data.req === j ? ' waiting' : ''));
             });
 
-            // SUNUCU PANELİ MANTIĞI
+            // Sunucu Paneli
             const panel = document.getElementById('host-panel');
-            const msg = document.getElementById('host-msg');
-            
-            if (role === 'sunucu') {
-                if (s.jReq) {
+            if(role === 'sunucu') {
+                if(data.req) {
                     panel.style.display = 'block';
-                    msg.innerText = `❓ JOKER TALEBİ: ${s.jReq}`;
-                } else if (s.sel !== null && !s.conf) {
+                    document.getElementById('h-msg').innerText = "Joker Talebi: " + data.req;
+                } else if(data.sel !== null && !data.ok) {
                     panel.style.display = 'block';
-                    msg.innerText = `💡 SEÇİLEN ŞIK: ${["A","B","C","D"][s.sel]} - SON KARAR MI?`;
+                    document.getElementById('h-msg').innerText = "Son Karar mı?";
                 } else {
                     panel.style.display = 'none';
                 }
-            } else {
-                panel.style.display = 'none'; // Yarışmacı paneli asla görmez
+
+                // Soru geçişi
+                if(data.ok) {
+                    setTimeout(() => {
+                        let fresh = JSON.parse(localStorage.getItem('game'));
+                        if(fresh.ok && fresh.sel === q.d) {
+                            localStorage.setItem('game', JSON.stringify({...fresh, lvl: fresh.lvl+1, sel:null, ok:false}));
+                        } else if(fresh.ok && fresh.sel !== q.d) {
+                            alert("Bitti!");
+                            localStorage.clear();
+                            location.reload();
+                        }
+                    }, 3000);
+                }
             }
-            
-            // Doğru cevap sonrası ilerleme (Sadece Sunucu)
-            if (s.conf && role === 'sunucu') {
-                setTimeout(() => {
-                    if (s.sel === q.c) {
-                        save({ level: s.level + 1, sel: null, conf: false });
-                    } else {
-                        alert("OYUN BİTTİ!");
-                        localStorage.clear();
-                        location.reload();
-                    }
-                }, 4000);
-            }
 
-            renderMoney(s.level);
-        }
-
-        function playerAction(idx) {
-            if (role !== 'yarismaci') return;
-            const s = JSON.parse(localStorage.getItem('m_state')) || {};
-            if (s.conf) return; // Onaylanmış soruya tekrar basamasın
-            save({ sel: idx });
-        }
-
-        function requestJoker(type) {
-            if (role !== 'yarismaci') return;
-            const s = JSON.parse(localStorage.getItem('m_state')) || {};
-            if (s.jUsed.includes(type) || s.jReq) return;
-            save({ jReq: type });
-        }
-
-        function hostConfirm() {
-            if (role !== 'sunucu') return;
-            const s = JSON.parse(localStorage.getItem('m_state'));
-            
-            if (s.jReq) {
-                const used = s.jUsed || [];
-                used.push(s.jReq);
-                save({ jReq: null, jUsed: used });
-            } else if (s.sel !== null) {
-                save({ conf: true });
-            }
-        }
-
-        function renderMoney(lvl) {
-            const list = document.getElementById('money-list');
-            list.innerHTML = '';
-            moneySteps.forEach((m, i) => {
-                const sIdx = moneySteps.length - 1 - i;
-                const div = document.createElement('div');
-                div.className = `money-step ${sIdx === lvl ? 'active-step' : ''}`;
-                div.innerHTML = `<span>${sIdx + 1}</span> <span>${m}</span>`;
-                list.appendChild(div);
+            // Para listesi
+            const mList = document.getElementById('money-list');
+            mList.innerHTML = '';
+            paralar.forEach((p, i) => {
+                const idx = 11 - i;
+                const d = document.createElement('div');
+                d.className = 'money-step' + (idx === data.lvl ? ' active-step' : '');
+                d.innerHTML = `<span>${idx+1}</span> <span>${p}</span>`;
+                mList.appendChild(d);
             });
         }
     </script>
